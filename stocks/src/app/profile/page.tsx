@@ -1,12 +1,9 @@
-import ProfileScreen from '@/screens/ProfileScreen';
-import { Metadata } from 'next';
+import { UserProfile } from '@tyrian/shared/ui';
 
-export const metadata: Metadata = {
-  title: 'Профиль',
-};
-
-const Profile = () => {
-  return <ProfileScreen />;
-};
-
-export default Profile;
+export default function ProfilePage() {
+  return (
+    <div className="container mx-auto py-8">
+      <UserProfile authServiceUrl="http://localhost:8001" />
+    </div>
+  );
+}

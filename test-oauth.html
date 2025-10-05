@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+        .result {
+            background: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #6366f1;
+        }
+        .success { border-left-color: #10b981; }
+        .error { border-left-color: #ef4444; }
+        pre {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .status.online { background: #10b981; }
+        .status.offline { background: #ef4444; }
+    </style>
+</head>
+<body>
+    <h1>🔐 OAuth Debug Tool</h1>
+    
+    <div class="test-section">
+        <h2>1. Проверка Auth Service</h2>
+        <button onclick="checkAuthService()">Проверить Auth Service (8001)</button>
+        <div id="auth-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Тест Google OAuth Redirect</h2>
+        <button onclick="testGoogleOAuth()">Получить Google Auth URL</button>
+        <button onclick="testGoogleOAuthDirect()">Прямой редирект (как в Header)</button>
+        <div id="oauth-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Проверка Profile API</h2>
+        <button onclick="checkProfile()">Проверить профиль (требует авторизации)</button>
+        <div id="profile-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Текущий статус</h2>
+        <div id="status-container">
+            <p>Auth Service (8001): <span id="auth-status" class="status">Проверяю...</span></p>
+            <p>AI Assistant (4201): <span id="frontend-status" class="status">Проверяю...</span></p>
+        </div>
+    </div>
+
+    <script>
+        const AUTH_URL = 'http://localhost:8001';
+
+        // Проверка Auth Service
+        async function checkAuthService() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ Проверяю...';
+            
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`);
+                const data = await response.json();
+                
+                if (data.auth_url) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Auth Service работает!</h3>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Auth URL получен:</strong></p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    throw new Error('No auth_url in response');
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Ошибка</h3>
+                    <p>${error.message}</p>
+                    <p>Убедись что Auth Service запущен на порту 8001</p>
+                `;
+            }
+        }
+
+        // Тест получения Google OAuth URL
+        async function testGoogleOAuth() {
+            const resultDiv = document.getElementById('oauth-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ Получаю auth_url...';
+            
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`);
+                const data = await response.json();
+                
+                if (data.auth_url) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Auth URL получен</h3>
+                        <p>Скопируй этот URL и открой в новой вкладке:</p>
+                        <pre>${data.auth_url}</pre>
+                        <button onclick="window.open('${data.auth_url}', '_blank')">Открыть в новой вкладке</button>
+                    `;
+                } else {
+                    throw new Error('No auth_url in response');
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<h3>❌ Ошибка:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Тест прямого редиректа (как в Header.tsx)
+        async function testGoogleOAuthDirect() {
+            const resultDiv = document.getElementById('oauth-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ Получаю auth_url и делаю редирект...';
+            
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`);
+                const data = await response.json();
+                
+                if (data.auth_url) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Редирект через 2 секунды...</h3>
+                        <p>Auth URL: ${data.auth_url}</p>
+                    `;
+                    
+                    setTimeout(() => {
+                        window.location.href = data.auth_url;
+                    }, 2000);
+                } else {
+                    throw new Error('No auth_url in response');
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<h3>❌ Ошибка:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Проверка профиля
+        async function checkProfile() {
+            const resultDiv = document.getElementById('profile-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ Проверяю профиль...';
+            
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/profile/`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Вы авторизованы!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else if (response.status === 401) {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <h3>🔒 Не авторизован</h3>
+                        <p>Сначала войди через Google OAuth (кнопка выше)</p>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<h3>❌ Ошибка:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Автоматическая проверка статуса при загрузке
+        async function checkStatus() {
+            // Auth Service
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`);
+                if (response.ok) {
+                    document.getElementById('auth-status').textContent = 'Online';
+                    document.getElementById('auth-status').className = 'status online';
+                }
+            } catch {
+                document.getElementById('auth-status').textContent = 'Offline';
+                document.getElementById('auth-status').className = 'status offline';
+            }
+
+            // Frontend
+            try {
+                const response = await fetch('http://localhost:4201');
+                if (response.ok) {
+                    document.getElementById('frontend-status').textContent = 'Online';
+                    document.getElementById('frontend-status').className = 'status online';
+                }
+            } catch {
+                document.getElementById('frontend-status').textContent = 'Offline';
+                document.getElementById('frontend-status').className = 'status offline';
+            }
+        }
+
+        // Проверяем статус при загрузке
+        checkStatus();
+        
+        // Обновляем статус каждые 5 секунд
+        setInterval(checkStatus, 5000);
+    </script>
+</body>
+</html>
+

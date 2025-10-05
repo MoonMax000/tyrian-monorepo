@@ -4,9 +4,9 @@ import { ServiceIframe } from '@/components/ServiceIframe/ServiceIframe';
 import { useParams } from 'next/navigation';
 
 const serviceMap: Record<string, { url: string; name: string }> = {
-  social: { url: 'http://localhost:3001', name: 'Social Network' },
-  stocks: { url: 'http://localhost:3002', name: 'Stocks' },
-  crypto: { url: 'http://localhost:3003', name: 'Cryptocurrency' },
+  social: { url: 'http://localhost:4204', name: 'Social Network' },
+  stocks: { url: 'http://localhost:4206', name: 'Stocks' },
+  crypto: { url: 'http://localhost:4203', name: 'Cryptocurrency' },
   ai: { url: 'http://localhost:3006', name: 'AI Profiles' },
   streaming: { url: 'http://localhost:3004', name: 'Live Streaming' },
 };

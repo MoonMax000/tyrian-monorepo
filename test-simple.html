@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой тест OAuth</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        h2 {
+            color: #667eea;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .result {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result.success {
+            border-left: 4px solid #10b981;
+        }
+        .result.error {
+            border-left: 4px solid #ef4444;
+        }
+        .result h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .result.success h3 { color: #10b981; }
+        .result.error h3 { color: #ef4444; }
+        pre {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .status-badge.online {
+            background: #10b981;
+            color: white;
+        }
+        .status-badge.offline {
+            background: #ef4444;
+            color: white;
+        }
+        .status-badge.checking {
+            background: #f59e0b;
+            color: white;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .instructions strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 OAuth Тест</h1>
+        
+        <div class="test-section">
+            <h2>Статус сервисов</h2>
+            <p>
+                Auth Service: 
+                <span id="auth-status" class="status-badge checking">Проверяю...</span>
+            </p>
+        </div>
+
+        <div class="test-section">
+            <h2>Шаг 1: Проверь Auth Service</h2>
+            <button onclick="checkAuth()">Проверить Auth Service</button>
+            <div id="auth-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Шаг 2: Войти через Google</h2>
+            <button onclick="loginGoogle()">Войти с Google</button>
+            <div id="login-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Шаг 3: Проверь профиль</h2>
+            <button onclick="checkProfile()">Мой профиль</button>
+            <div id="profile-result" class="result"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>💡 Инструкция:</strong><br>
+            1. Сначала нажми "Проверить Auth Service"<br>
+            2. Если работает - нажми "Войти с Google"<br>
+            3. После входа - нажми "Мой профиль"
+        </div>
+    </div>
+
+    <script>
+        const AUTH_URL = 'http://localhost:8001';
+
+        // Проверка статуса при загрузке
+        window.onload = function() {
+            updateAuthStatus();
+            setInterval(updateAuthStatus, 5000);
+        };
+
+        async function updateAuthStatus() {
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`, {
+                    mode: 'cors',
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    document.getElementById('auth-status').className = 'status-badge online';
+                    document.getElementById('auth-status').textContent = 'Online ✓';
+                } else {
+                    throw new Error('Not OK');
+                }
+            } catch (error) {
+                document.getElementById('auth-status').className = 'status-badge offline';
+                document.getElementById('auth-status').textContent = 'Offline ✗';
+            }
+        }
+
+        async function checkAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.className = 'result show';
+            resultDiv.innerHTML = '<h3>⏳ Проверяю...</h3>';
+
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`, {
+                    mode: 'cors',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.auth_url) {
+                    resultDiv.className = 'result show success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Auth Service работает!</h3>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Auth URL получен</strong></p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    throw new Error('Нет auth_url в ответе');
+                }
+            } catch (error) {
+                resultDiv.className = 'result show error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Ошибка</h3>
+                    <p>${error.message}</p>
+                    <p>Убедись что Auth Service запущен на порту 8001</p>
+                `;
+            }
+        }
+
+        async function loginGoogle() {
+            const resultDiv = document.getElementById('login-result');
+            resultDiv.className = 'result show';
+            resultDiv.innerHTML = '<h3>⏳ Получаю auth_url...</h3>';
+
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`, {
+                    mode: 'cors',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.auth_url) {
+                    resultDiv.className = 'result show success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Редирект через 2 секунды...</h3>
+                        <p>Тебя перенаправит на Google OAuth</p>
+                    `;
+                    
+                    setTimeout(() => {
+                        window.location.href = data.auth_url;
+                    }, 2000);
+                } else {
+                    throw new Error('Нет auth_url в ответе');
+                }
+            } catch (error) {
+                resultDiv.className = 'result show error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Ошибка</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+
+        async function checkProfile() {
+            const resultDiv = document.getElementById('profile-result');
+            resultDiv.className = 'result show';
+            resultDiv.innerHTML = '<h3>⏳ Загружаю профиль...</h3>';
+
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/profile/`, {
+                    mode: 'cors',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.className = 'result show success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Ты авторизован!</h3>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Имя:</strong> ${data.username}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else if (response.status === 401) {
+                    resultDiv.className = 'result show error';
+                    resultDiv.innerHTML = `
+                        <h3>🔒 Не авторизован</h3>
+                        <p>Сначала войди через Google (кнопка выше)</p>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                resultDiv.className = 'result show error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Ошибка</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
+

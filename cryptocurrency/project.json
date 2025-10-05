@@ -4,6 +4,55 @@
   "sourceRoot": "cryptocurrency",
   "projectType": "application",
   "tags": [],
-  "// targets": "to see all targets run: nx show project cryptocurrency --web",
-  "targets": {}
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/cryptocurrency"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "cryptocurrency"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "cryptocurrency:build",
+        "dev": true,
+        "port": 4203
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "cryptocurrency:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "cryptocurrency:build:production",
+          "dev": false
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "cryptocurrency:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "cryptocurrency/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
 }

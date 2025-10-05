@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .result {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .loading {
+            border-left-color: #f59e0b;
+        }
+        .success {
+            border-left-color: #10b981;
+        }
+        .error {
+            border-left-color: #ef4444;
+        }
+        pre {
+            background: #0a0a0a;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Login Debug Tool</h1>
+    <p>Это точная копия логики из Header.tsx</p>
+
+    <div>
+        <button id="loginBtn" onclick="testLogin()">
+            🚀 TEST LOGIN (как в Header.tsx)
+        </button>
+        <button onclick="testDirect()">
+            ⚡ DIRECT REDIRECT (без fetch)
+        </button>
+    </div>
+
+    <div id="result" class="result" style="display:none;"></div>
+
+    <script>
+        const AUTH_URL = 'http://localhost:8001';
+
+        // Точная копия handleLoginClick из Header.tsx
+        async function testLogin() {
+            const resultDiv = document.getElementById('result');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result loading';
+            resultDiv.innerHTML = '<p>⏳ Делаю fetch к Auth Service...</p><p>Это займет секунду...</p>';
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = '⏳ Loading...';
+            
+            const startTime = Date.now();
+            
+            try {
+                console.log('[TEST] Starting fetch to:', `${AUTH_URL}/api/accounts/google/`);
+                
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                
+                console.log('[TEST] Fetch completed in:', duration + 'ms');
+                console.log('[TEST] Response status:', response.status);
+                
+                const data = await response.json();
+                console.log('[TEST] Response data:', data);
+                
+                if (data.auth_url) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <p>✅ Fetch успешен!</p>
+                        <p><strong>Время:</strong> ${duration}ms</p>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Auth URL получен:</strong></p>
+                        <pre>${data.auth_url}</pre>
+                        <p>🚀 Редирект через 2 секунды...</p>
+                    `;
+                    
+                    setTimeout(() => {
+                        console.log('[TEST] Redirecting to:', data.auth_url);
+                        window.location.href = data.auth_url;
+                    }, 2000);
+                } else {
+                    throw new Error('No auth_url in response');
+                }
+            } catch (error) {
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                
+                console.error('[TEST] Login error:', error);
+                
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <p>❌ Ошибка!</p>
+                    <p><strong>Время до ошибки:</strong> ${duration}ms</p>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Type:</strong> ${error.name}</p>
+                    <pre>${error.stack}</pre>
+                    <p><strong>Возможные причины:</strong></p>
+                    <ul>
+                        <li>CORS блокирует запрос</li>
+                        <li>Auth Service не отвечает</li>
+                        <li>Network timeout</li>
+                    </ul>
+                `;
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = '🚀 TEST LOGIN (как в Header.tsx)';
+            }
+        }
+
+        // Прямой редирект (пропускаем fetch)
+        function testDirect() {
+            const auth_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=659860871739-c94m1fik99740ee694mf5oeihffodbk8.apps.googleusercontent.com&redirect_uri=http://localhost:8001/api/accounts/google/callback/&response_type=code&scope=openid%20email%20profile&access_type=offline";
+            
+            console.log('[TEST] Direct redirect to Google OAuth');
+            window.location.href = auth_url;
+        }
+
+        // Проверка при загрузке
+        window.addEventListener('load', () => {
+            console.log('[TEST] Page loaded');
+            console.log('[TEST] Origin:', window.location.origin);
+            console.log('[TEST] Auth Service URL:', AUTH_URL);
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #666;
+        }
+        .success { border-left-color: #0f0; }
+        .error { border-left-color: #f00; }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #4f46e5; }
+        pre {
+            background: #0a0a0a;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 CORS Debug Tool</h1>
+    
+    <div class="test">
+        <h2>Test 1: Simple Fetch (same as frontend)</h2>
+        <button onclick="test1()">Run Test 1</button>
+        <div id="result1"></div>
+    </div>
+
+    <div class="test">
+        <h2>Test 2: Fetch with credentials</h2>
+        <button onclick="test2()">Run Test 2</button>
+        <div id="result2"></div>
+    </div>
+
+    <div class="test">
+        <h2>Test 3: Check what Auth Service returns</h2>
+        <button onclick="test3()">Run Test 3</button>
+        <div id="result3"></div>
+    </div>
+
+    <script>
+        const AUTH_URL = 'http://localhost:8001';
+
+        async function test1() {
+            const div = document.getElementById('result1');
+            div.innerHTML = '<p>⏳ Testing...</p>';
+            
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const data = await response.json();
+                
+                div.parentElement.classList.add('success');
+                div.innerHTML = `
+                    <p>✅ Success!</p>
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>Headers:</strong></p>
+                    <pre>${JSON.stringify(Object.fromEntries([...response.headers]), null, 2)}</pre>
+                    <p><strong>Response:</strong></p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                div.parentElement.classList.add('error');
+                div.innerHTML = `
+                    <p>❌ Error!</p>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Type:</strong> ${error.name}</p>
+                    <pre>${error.stack}</pre>
+                `;
+                console.error('Test 1 error:', error);
+            }
+        }
+
+        async function test2() {
+            const div = document.getElementById('result2');
+            div.innerHTML = '<p>⏳ Testing...</p>';
+            
+            try {
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const data = await response.json();
+                
+                div.parentElement.classList.add('success');
+                div.innerHTML = `
+                    <p>✅ Success!</p>
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>CORS Headers:</strong></p>
+                    <pre>Access-Control-Allow-Origin: ${response.headers.get('access-control-allow-origin') || 'NOT SET'}
+Access-Control-Allow-Credentials: ${response.headers.get('access-control-allow-credentials') || 'NOT SET'}</pre>
+                    <p><strong>Response:</strong></p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                div.parentElement.classList.add('error');
+                div.innerHTML = `
+                    <p>❌ Error!</p>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Details:</strong> This usually means CORS is blocking the request</p>
+                    <p><strong>Check:</strong></p>
+                    <ul>
+                        <li>Auth Service CORS settings</li>
+                        <li>Browser console (F12) for detailed error</li>
+                    </ul>
+                `;
+                console.error('Test 2 error:', error);
+            }
+        }
+
+        async function test3() {
+            const div = document.getElementById('result3');
+            div.innerHTML = '<p>⏳ Checking Auth Service...</p>';
+            
+            try {
+                // Попробуем простой запрос без fetch API
+                const response = await fetch(`${AUTH_URL}/api/accounts/google/`);
+                const data = await response.json();
+                
+                div.parentElement.classList.add('success');
+                div.innerHTML = `
+                    <p>✅ Auth Service is responding!</p>
+                    <p><strong>Auth URL:</strong></p>
+                    <pre>${data.auth_url}</pre>
+                    <p><strong>This means:</strong></p>
+                    <ul>
+                        <li>✅ Auth Service is running</li>
+                        <li>✅ Google OAuth endpoint is working</li>
+                        <li>${response.headers.get('access-control-allow-origin') ? '✅' : '❌'} CORS headers ${response.headers.get('access-control-allow-origin') ? 'ARE' : 'ARE NOT'} set</li>
+                    </ul>
+                `;
+            } catch (error) {
+                div.parentElement.classList.add('error');
+                div.innerHTML = `
+                    <p>❌ Cannot reach Auth Service!</p>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Possible reasons:</strong></p>
+                    <ul>
+                        <li>Auth Service is not running on port 8001</li>
+                        <li>CORS is completely blocking the request</li>
+                    </ul>
+                `;
+                console.error('Test 3 error:', error);
+            }
+        }
+
+        // Информация о текущем origin
+        document.addEventListener('DOMContentLoaded', () => {
+            const info = document.createElement('div');
+            info.className = 'test';
+            info.innerHTML = `
+                <h2>📝 Current Page Info</h2>
+                <p><strong>Origin:</strong> ${window.location.origin}</p>
+                <p><strong>Protocol:</strong> ${window.location.protocol}</p>
+                <p><strong>Host:</strong> ${window.location.host}</p>
+                <p><strong>Port:</strong> ${window.location.port || '(default)'}</p>
+            `;
+            document.body.insertBefore(info, document.body.firstChild);
+        });
+    </script>
+</body>
+</html>
+

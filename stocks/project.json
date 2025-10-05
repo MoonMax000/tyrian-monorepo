@@ -4,6 +4,55 @@
   "sourceRoot": "stocks",
   "projectType": "application",
   "tags": [],
-  "// targets": "to see all targets run: nx show project stocks --web",
-  "targets": {}
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/stocks"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "stocks"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "stocks:build",
+        "dev": true,
+        "port": 4206
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "stocks:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "stocks:build:production",
+          "dev": false
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "stocks:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "stocks/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
 }

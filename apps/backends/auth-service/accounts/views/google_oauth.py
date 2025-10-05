@@ -104,7 +104,7 @@ class GoogleOAuthCallbackView(APIView):
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
             # Определяем куда редиректить
-            frontend_url = os.getenv('MARKETPLACE_URL', 'http://localhost:3005')
+            frontend_url = os.getenv('MARKETPLACE_URL', 'http://localhost:4205')
             
             # Редиректим с токеном сессии
             return redirect(f"{frontend_url}/?login=success")

@@ -4,6 +4,55 @@
   "sourceRoot": "marketplace",
   "projectType": "application",
   "tags": [],
-  "// targets": "to see all targets run: nx show project marketplace --web",
-  "targets": {}
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/marketplace"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "marketplace"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "marketplace:build",
+        "dev": true,
+        "port": 4205
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "marketplace:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "marketplace:build:production",
+          "dev": false
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "marketplace:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "marketplace/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
 }

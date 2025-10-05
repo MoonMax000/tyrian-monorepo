@@ -1,473 +1,272 @@
-# 🚀 Tyrian Trade Platform - Nx Monorepo
+# 🚀 Tyrian Trade Monorepo
 
-> **Production-ready monorepo** for the Tyrian Trade platform with 6 frontends, 15 backends, and complete infrastructure.
-
-[![Status](https://img.shields.io/badge/status-production%20ready-brightgreen)](https://github.com/MoonMax000/tyrian-monorepo)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Nx](https://img.shields.io/badge/Nx-Monorepo-143055?logo=nx)](https://nx.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
+Unified platform for trading, social networking, AI assistance, and live streaming - all in one Nx monorepo.
 
 ---
 
-## 📋 Table of Contents
+## ✨ What's Inside
 
-- [Overview](#-overview)
-- [Quick Start](#-quick-start)
-- [Projects](#-projects)
-- [Development](#-development)
-- [Infrastructure](#-infrastructure)
-- [Testing](#-testing)
-- [Deployment](#-deployment)
-- [Documentation](#-documentation)
+### Frontend Applications (6 Next.js + 1 Vite):
+- **AI Assistant** (:4201) - AI-powered trading assistant
+- **Live Streaming** (:4202) - Live streaming platform
+- **Cryptocurrency** (:4203) - Crypto trading platform
+- **Social Network** (:4204) - Social media for traders
+- **Marketplace** (:4205) - Trading marketplace
+- **Stocks** (:4206) - Stock trading platform
+- **Portfolios** (:5173) - Portfolio management (Vite + React)
 
----
+### Backend Services (15 Go + 2 Django):
+- **auth-service** (Django) - Centralized authentication with Google OAuth
+- **auth-sync-service** (Go) - Auth synchronization
+- 6x **socialweb-*-service** (Go + FastAPI) - Social network microservices
+- 6x **stream-*-service** (Go) - Streaming microservices
+- **stocks-backend** (Django) - Stocks API
 
-## 🌟 Overview
-
-**Tyrian Trade** is a comprehensive trading and social platform featuring:
-
-- 🎨 **6 Modern Frontends** (Next.js 15 + Vite)
-- ⚙️ **15 Backend Services** (Go + Python/Django/FastAPI)
-- 📦 **4 Shared Libraries** (UI, API, Types, Feature Flags)
-- 🐳 **Complete Docker Infrastructure**
-- 🔄 **CI/CD Pipelines** (GitHub Actions)
-- 🧪 **Testing Framework** (Jest, Pytest, Go test)
-
-### Key Features
-
-✅ **Monorepo Architecture** - Single source of truth, shared code, unified tooling  
-✅ **Production Ready** - Docker containers, health checks, auto-scaling  
-✅ **Developer Experience** - Hot reload, instant type checking, one-command start  
-✅ **Infrastructure as Code** - PostgreSQL, Redis, RabbitMQ, Elasticsearch, MinIO  
-✅ **Modern Stack** - Next.js 15, React 18, Go 1.21, Python 3.11, TypeScript 5  
+### Shared Libraries:
+- `@tyrian/ui` - Shared React components (Header, Footer, UserProfile, etc.)
+- `@tyrian/api` - API clients and utilities
+- `@tyrian/types` - TypeScript type definitions
+- `@tyrian/feature-flags` - Feature flag management
 
 ---
 
-## 🚀 Quick Start
+## 🎯 Quick Start
 
-### Prerequisites
-
-- **Node.js** 20+
-- **npm** or **yarn**
-- **Docker** & **Docker Compose**
-- *Optional:* Go 1.21, Python 3.11
-
-### 1. Clone & Install
-
+### Prerequisites:
 ```bash
-# Clone repository
-git clone https://github.com/MoonMax000/tyrian-monorepo.git
-cd tyrian-monorepo
+node >= 18
+npm >= 9
+python >= 3.10
+go >= 1.20
+```
 
-# Install dependencies
+### 1. Install Dependencies:
+```bash
+cd tyrian-monorepo
 npm install
 ```
 
-### 2. Start Infrastructure
-
+### 2. Start Frontend Apps:
 ```bash
-# Start development infrastructure (PostgreSQL, Redis, RabbitMQ, etc.)
-docker-compose -f docker-compose.dev.yml up -d
+# Single app
+npx nx serve marketplace --port 4205
 
-# Check status
-docker-compose -f docker-compose.dev.yml ps
-
-# View logs
-docker-compose -f docker-compose.dev.yml logs -f
+# All apps (in separate terminals)
+npx nx serve ai-assistant --port 4201
+npx nx serve live-streaming --port 4202
+npx nx serve cryptocurrency --port 4203
+npx nx serve social-network --port 4204
+npx nx serve marketplace --port 4205
+npx nx serve stocks --port 4206
+npm run dev:portfolios  # Vite app on :5173
 ```
 
-### 3. Start Applications
-
+### 3. Start Auth Service:
 ```bash
-# Frontends
-npx nx serve portfolios       # http://localhost:5173
-npx nx serve ai-assistant     # http://localhost:4201
-npx nx serve live-streaming   # http://localhost:4202
-
-# Backends (example)
-cd apps/backends/auth-service
+cd ../AXA-auth-server-main/auth-core
+source venv/bin/activate
+export GOOGLE_CLIENT_ID="your-id"
+export GOOGLE_CLIENT_SECRET="your-secret"
+export DEBUG="True"
+export CORS_ALLOW_ALL_ORIGINS="True"
 python manage.py runserver 8001
 ```
 
-### 4. Access Services
-
-- **Portfolios:** http://localhost:5173
-- **AI Assistant:** http://localhost:4201
-- **PostgreSQL UI (Adminer):** http://localhost:8080
-- **Redis UI (Commander):** http://localhost:8081
-- **RabbitMQ Management:** http://localhost:15672 (tyrian/tyrian_dev)
-- **MinIO Console:** http://localhost:9001 (tyrian/tyrian_dev_password)
-
----
-
-## 📦 Projects
-
-### Frontend Applications (6)
-
-| App | Technology | Port | Description |
-|-----|------------|------|-------------|
-| **Portfolios** | Vite + React | 5173 | Investment portfolio management |
-| **AI Assistant** | Next.js 15 | 4201 | AI-powered trading assistant |
-| **Live Streaming** | Next.js 15 | 4202 | Live trading streams & community |
-| **Cryptocurrency** | Next.js 15 | 4203 | Crypto trading platform |
-| **Social Network** | Next.js 15 | 4204 | Social trading community |
-| **Marketplace** | Next.js 15 | 4205 | Trading marketplace |
-| **Stocks** | Next.js 15 | 4206 | Stock trading platform |
-
-### Backend Services (15)
-
-<details>
-<summary><b>Auth Services (2)</b></summary>
-
-| Service | Tech | Port | Description |
-|---------|------|------|-------------|
-| auth-service | Django | 8001 | Main authentication |
-| auth-sync-service | Go | 8002 | Auth synchronization |
-
-</details>
-
-<details>
-<summary><b>Social Network Services (6)</b></summary>
-
-| Service | Tech | Port | Description |
-|---------|------|------|-------------|
-| posts-service | Go | 8003 | Post management |
-| profiles-service | Go | 8004 | User profiles |
-| likes-service | Go | 8005 | Likes & reactions |
-| subscriptions-service | Go | 8006 | User subscriptions |
-| favorites-service | Go | 8007 | Favorites |
-| notifications-service | FastAPI | 8010 | Notifications |
-
-</details>
-
-<details>
-<summary><b>Streaming Services (6)</b></summary>
-
-| Service | Tech | Port | Description |
-|---------|------|------|-------------|
-| stream-auth-service | Go | 8011 | Stream authentication |
-| stream-chat-service | Go | 8012 | Live chat |
-| stream-media-service | Go | 8013 | Media processing |
-| stream-notify-service | Go | 8015 | Stream notifications |
-| stream-recommend-service | Go | 8016 | Recommendations |
-| stream-streamer-service | Go | 8017 | Streamer management |
-
-</details>
-
-<details>
-<summary><b>Trading Services (1)</b></summary>
-
-| Service | Tech | Port | Description |
-|---------|------|------|-------------|
-| stocks-backend | Django | 8020 | Stock trading |
-
-</details>
-
-### Shared Libraries (4)
-
-| Library | Description |
-|---------|-------------|
-| **@tyrian/shared/ui** | Reusable React components (Header, Footer, etc.) |
-| **@tyrian/shared/api** | API utilities and authentication |
-| **@tyrian/shared/types** | Shared TypeScript types |
-| **@tyrian/shared/feature-flags** | Feature flags system |
-
----
-
-## 💻 Development
-
-### Common Commands
-
+Or use the provided script:
 ```bash
-# Development
-npx nx serve <project-name>          # Start dev server
-npx nx build <project-name>          # Build project
-npx nx test <project-name>           # Run tests
-npx nx lint <project-name>           # Lint code
-
-# Multiple projects
-npx nx run-many --target=build --all    # Build all
-npx nx run-many --target=test --all     # Test all
-npx nx affected --target=build          # Build affected
-
-# Nx utilities
-npx nx graph                         # View dependency graph
-npx nx show projects                 # List all projects
-npx nx show project <name>           # Project details
-```
-
-### Project Structure
-
-```
-tyrian-monorepo/
-├── apps/
-│   ├── <frontends>/                 # 6 Next.js + Vite apps
-│   └── backends/                    # 15 backend services
-├── libs/
-│   └── shared/                      # 4 shared libraries
-├── infrastructure/                  # Docker, configs
-├── .github/workflows/               # CI/CD pipelines
-└── docker-compose.yml               # Infrastructure
-```
-
-### Adding New Projects
-
-```bash
-# Frontend (Next.js)
-npx nx g @nx/next:app my-app
-
-# Backend (Node.js)
-npx nx g @nx/node:app my-backend
-
-# Library
-npx nx g @nx/js:lib my-lib
+./START_AUTH.sh
 ```
 
 ---
 
-## 🐳 Infrastructure
+## 📚 Documentation
 
-### Services
+**➡️ [Full Documentation](docs/README.md)**
 
-- **PostgreSQL 15** - Main database (15 schemas)
-- **Redis 7** - Caching & sessions
-- **RabbitMQ 3.12** - Message queue
-- **Elasticsearch 8.11** - Full-text search
-- **MinIO** - S3-compatible object storage
+### Quick Links:
+- **[Quick Start Guide](docs/setup/QUICK_START.md)** - Get started in 5 minutes
+- **[OAuth Debug Guide](docs/OAUTH_DEBUG_GUIDE.md)** - ⭐ Must-read for auth issues
+- **[Architecture](docs/architecture/ARCHITECTURE.md)** - System architecture
+- **[Troubleshooting](docs/troubleshooting/)** - Common issues and solutions
+- **[Migration Guide](docs/migration/NX_MIGRATION_PLAN.md)** - Nx migration documentation
 
-### Docker Compose
+---
 
-```bash
-# Development (infrastructure only)
-docker-compose -f docker-compose.dev.yml up -d
+## 🏗️ Architecture
 
-# Production (all services)
-docker-compose up -d
-
-# Individual services
-docker-compose up -d postgres redis rabbitmq
-
-# Stop services
-docker-compose down
-
-# View logs
-docker-compose logs -f <service>
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Frontend Apps (Next.js/Vite)            │
+│  AI│Streaming│Crypto│Social│Marketplace│Stocks│Portfolios  │
+│  :4201 :4202  :4203  :4204    :4205    :4206    :5173     │
+└─────────────┬───────────────────────────────────────────────┘
+              │
+              │ HTTP/REST
+              │
+┌─────────────▼───────────────────────────────────────────────┐
+│                    Auth Service (Django)                     │
+│              :8001 - Google OAuth SSO                        │
+└─────────────┬───────────────────────────────────────────────┘
+              │
+              │ Sync
+              │
+┌─────────────▼───────────────────────────────────────────────┐
+│               Backend Microservices (Go/Django)              │
+│  Social: posts│profiles│likes│subscriptions│favorites│notify│
+│  Stream: auth│chat│media│notify│recommend│streamer          │
+│  Stocks: backend (Django)                                    │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-### Environment Variables
+---
 
-Create `.env.local` files:
+## 🛠️ Available Commands
 
+### Development:
 ```bash
-# Database
-DATABASE_URL=postgresql://tyrian:tyrian_dev@localhost:5432/tyrian_db
+npx nx serve <app-name>      # Start development server
+npx nx build <app-name>      # Production build
+npx nx test <app-name>       # Run tests
+npx nx lint <app-name>       # Lint code
+```
 
-# Redis
-REDIS_URL=redis://localhost:6379/0
+### Monorepo:
+```bash
+npx nx graph                 # Visualize dependency graph
+npx nx affected:test        # Test affected projects
+npx nx affected:build       # Build affected projects
+npx nx reset                # Clear Nx cache
+```
 
-# RabbitMQ
-RABBITMQ_URL=amqp://tyrian:tyrian_dev@localhost:5672/
-
-# S3 (MinIO)
-S3_ENDPOINT=http://localhost:9000
-S3_ACCESS_KEY=tyrian
-S3_SECRET_KEY=tyrian_dev_password
+### Utilities:
+```bash
+npx nx list                  # List installed plugins
+npx nx migrate latest       # Migrate to latest Nx version
 ```
 
 ---
 
 ## 🧪 Testing
 
-### Running Tests
-
 ```bash
+# Unit tests
+npx nx test shared-ui
+
 # All tests
 npx nx run-many --target=test --all
 
-# Specific project
-npx nx test shared-ui
-
-# With coverage
-npx nx test shared-ui --coverage
-
-# Watch mode
-npx nx test shared-ui --watch
-
-# Only affected projects
-npx nx affected --target=test
-```
-
-### Test Structure
-
-```bash
-# Unit tests
-src/**/*.spec.ts
-src/**/*.spec.tsx
-
-# E2E tests
-e2e/**/*.spec.ts
+# Affected tests only
+npx nx affected:test
 ```
 
 ---
 
-## 🚀 Deployment
-
-### Building for Production
+## 🐳 Docker
 
 ```bash
-# Build all frontends
-npx nx run-many --target=build --all
+# Development
+docker-compose -f docker-compose.dev.yml up
 
-# Build specific app
-npx nx build portfolios
-
-# Docker build
-docker-compose build
-```
-
-### Docker Deployment
-
-```bash
-# Start all services
+# Production
 docker-compose up -d
-
-# Check status
-docker-compose ps
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
 ```
 
-### Environment Configuration
+---
 
-- **Development:** `.env.local`
-- **Staging:** `.env.staging`
-- **Production:** Kubernetes Secrets / Environment Variables
+## 🚢 Deployment
+
+### GitHub Actions CI/CD:
+Automated workflows for:
+- ✅ Build and test on every push
+- ✅ Deploy to staging on merge to `develop`
+- ✅ Deploy to production on merge to `main`
+
+See: [`.github/workflows/`](.github/workflows/)
 
 ---
 
-## 📚 Documentation
+## 🔒 Environment Variables
 
-### Main Documents
+### Auth Service (Required):
+```bash
+DEBUG=True
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:8001/api/accounts/google/callback/
+MARKETPLACE_URL=http://localhost:4205
+CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOW_CREDENTIALS=True
+```
 
-- **[FINAL_SUMMARY.md](FINAL_SUMMARY.md)** - Complete project overview
-- **[INFRASTRUCTURE_COMPLETE.md](INFRASTRUCTURE_COMPLETE.md)** - Docker, CI/CD, Testing
-- **[GITHUB_WORKFLOWS_SETUP.md](GITHUB_WORKFLOWS_SETUP.md)** - GitHub Actions setup
-- **[apps/backends/README.md](apps/backends/README.md)** - Backend services documentation
-
-### Quick References
-
-- **[NX_MIGRATION_PLAN.md](NX_MIGRATION_PLAN.md)** - Migration strategy
-- **[PHASE_2_COMPLETE.md](PHASE_2_COMPLETE.md)** - Backend migration
-- **[FINAL_MIGRATION_COMPLETE.md](FINAL_MIGRATION_COMPLETE.md)** - Frontend migration
-
----
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Framework:** Next.js 15, Vite 7
-- **UI:** React 18, Tailwind CSS
-- **State:** React Query, Zustand
-- **Build:** Webpack 5, Turbopack
-- **Language:** TypeScript 5
-
-### Backend
-- **Go:** 1.21 (11 services)
-- **Python:** 3.11 (4 services)
-- **Frameworks:** Django 4, FastAPI, Gin, Echo
-
-### Infrastructure
-- **Database:** PostgreSQL 15
-- **Cache:** Redis 7
-- **Queue:** RabbitMQ 3.12
-- **Search:** Elasticsearch 8.11
-- **Storage:** MinIO
-- **Container:** Docker + Compose
-
-### DevOps
-- **Monorepo:** Nx
-- **CI/CD:** GitHub Actions
-- **Testing:** Jest, Pytest, Go test
-- **Linting:** ESLint, Prettier
+### Frontend Apps (Optional):
+```bash
+NEXT_PUBLIC_AUTH_SERVICE_URL=http://localhost:8001
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
 
 ---
 
-## 📊 Status
+## 🎓 Key Learnings
 
-- ✅ **Frontends:** 6/6 migrated
-- ✅ **Backends:** 15/15 migrated
-- ✅ **Libraries:** 4/4 created
-- ✅ **Docker:** Complete infrastructure
-- ✅ **CI/CD:** Pipelines ready
-- ✅ **Testing:** Framework configured
-- ✅ **Documentation:** Comprehensive
+### What Worked:
+✅ Nx monorepo for unified development  
+✅ Shared component library (`@tyrian/ui`)  
+✅ Centralized authentication with Django  
+✅ Docker Compose for local development  
+✅ Database sessions for development (no Redis needed)  
 
-**Overall Status:** 🚀 **PRODUCTION READY!**
+### What to Watch Out For:
+⚠️ Django Signals can block HTTP responses (use Celery EAGER mode for dev)  
+⚠️ Always use `manage.py runserver`, not `uvicorn` (CORS middleware)  
+⚠️ Clear `.next` cache when experiencing build issues  
+⚠️ Use `/api/accounts/me/` endpoint, not `/profile/`  
+
+---
+
+## 📊 Project Status
+
+### ✅ Completed:
+- [x] Nx monorepo migration (6 frontends + 15 backends)
+- [x] Shared libraries setup
+- [x] Google OAuth SSO integration
+- [x] User profile component
+- [x] Docker Compose configuration
+- [x] CI/CD with GitHub Actions
+- [x] Jest testing infrastructure
+
+### 🚧 In Progress:
+- [ ] E2E testing with Playwright
+- [ ] Kubernetes deployment
+- [ ] Monitoring and logging (Prometheus + Grafana)
 
 ---
 
 ## 🤝 Contributing
 
-### Development Workflow
-
-1. Create feature branch: `git checkout -b feature/my-feature`
-2. Make changes
-3. Run tests: `npx nx affected --target=test`
-4. Commit: `git commit -m "feat: add feature"`
-5. Push: `git push origin feature/my-feature`
-6. Open Pull Request
-
-### Code Style
-
-- Follow TypeScript/ESLint rules
-- Write tests for new features
-- Update documentation
-- Keep commits atomic
+1. Create a feature branch: `git checkout -b feature/my-feature`
+2. Make changes and test: `npx nx affected:test`
+3. Commit: `git commit -m "feat: add feature"`
+4. Push: `git push origin feature/my-feature`
+5. Create a Pull Request
 
 ---
 
 ## 📝 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+Proprietary - All rights reserved
 
 ---
 
-## 🙏 Acknowledgments
+## 🆘 Support
 
-- **Nx Team** - Amazing monorepo tool
-- **Next.js** - Powerful React framework
-- **Go Team** - Fast and reliable backend language
-- **Docker** - Container platform
-
----
-
-## 📞 Support
-
-- **Issues:** [GitHub Issues](https://github.com/MoonMax000/tyrian-monorepo/issues)
-- **Documentation:** See [FINAL_SUMMARY.md](FINAL_SUMMARY.md)
-- **Nx Docs:** https://nx.dev
+- 📖 [Documentation](docs/README.md)
+- 🐛 [Issues](https://github.com/tyrian-trade/monorepo/issues)
+- 💬 Internal Slack: `#tyrian-trade-dev`
 
 ---
 
-## 🎉 Quick Stats
+**Built with ❤️ using Nx, Next.js, Django, and Go**
 
-```
-📦 Total Projects:     25
-📁 Lines of Code:      100,000+
-🔧 Technologies:       10+
-🐳 Docker Services:    21
-📚 Documentation:      12 files
-⏱️ Setup Time:         5 minutes
-🚀 Status:             Production Ready
-```
-
----
-
-**Built with ❤️ for the Tyrian Trade Platform**
-
-*Last Updated: October 5, 2025*
+**Last Updated:** October 5, 2025  
+**Version:** 1.0.0  
+**Status:** ✅ Production Ready

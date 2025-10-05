@@ -50,16 +50,16 @@ const navElements: NavElementProps[] = [
   {
     icon: <Bitcoin className="h-5 w-5" />,
     title: 'Cryptocurrency',
-    route: 'http://localhost:3003',
+    route: 'http://localhost:4203',
     children: [
-      { icon: <Home className="h-4 w-4" />, title: 'Home', route: 'http://localhost:3003/' },
-      { icon: <Bitcoin className="h-4 w-4" />, title: 'All Crypto', route: 'http://localhost:3003/crypto' },
-      { icon: <Bitcoin className="h-4 w-4" />, title: 'Portfolios', route: 'http://localhost:3003/portfolios' },
-      { icon: <TrendingUp className="h-4 w-4" />, title: 'Gainers & Losers', route: 'http://localhost:3003/gainers-and-losers' },
-      { icon: <TrendingUp className="h-4 w-4" />, title: 'Recently Added', route: 'http://localhost:3003/recently-added' },
-      { icon: <Calendar className="h-4 w-4" />, title: 'Calendar', route: 'http://localhost:3003/calendar' },
-      { icon: <TrendingUp className="h-4 w-4" />, title: 'Market News', route: 'http://localhost:3003/market-news' },
-      { icon: <Users className="h-4 w-4" />, title: 'Profile', route: 'http://localhost:3003/profile' },
+      { icon: <Home className="h-4 w-4" />, title: 'Home', route: 'http://localhost:4203/' },
+      { icon: <Bitcoin className="h-4 w-4" />, title: 'All Crypto', route: 'http://localhost:4203/crypto' },
+      { icon: <Bitcoin className="h-4 w-4" />, title: 'Portfolios', route: 'http://localhost:4203/portfolios' },
+      { icon: <TrendingUp className="h-4 w-4" />, title: 'Gainers & Losers', route: 'http://localhost:4203/gainers-and-losers' },
+      { icon: <TrendingUp className="h-4 w-4" />, title: 'Recently Added', route: 'http://localhost:4203/recently-added' },
+      { icon: <Calendar className="h-4 w-4" />, title: 'Calendar', route: 'http://localhost:4203/calendar' },
+      { icon: <TrendingUp className="h-4 w-4" />, title: 'Market News', route: 'http://localhost:4203/market-news' },
+      { icon: <Users className="h-4 w-4" />, title: 'Profile', route: 'http://localhost:4203/profile' },
     ],
   },
   {
@@ -202,12 +202,12 @@ const navElements: NavElementProps[] = [
   {
     icon: <Calendar className="h-5 w-5" />,
     title: 'Calendar',
-    route: 'http://localhost:3005/calendar',
+    route: 'http://localhost:4205/calendar',
   },
   {
     icon: <FolderKanban className="h-5 w-5" />,
     title: 'My Portfolios',
-    route: 'http://localhost:3005/portfolios',
+    route: 'http://localhost:4205/portfolios',
   },
   {
     icon: <FolderKanban className="h-5 w-5" />,
