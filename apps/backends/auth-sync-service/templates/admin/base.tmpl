@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.title}}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .nav { background: #f8f9fa; padding: 10px; margin-bottom: 20px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #f8f9fa; }
+        .btn { padding: 8px 16px; background: #007bff; color: white; border: none; cursor: pointer; }
+        .btn-danger { background: #dc3545; }
+        .error { color: red; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/admin">Dashboard</a>
+            <a href="/admin/users">Users</a>
+            {{if .admin}}
+            <form style="display: inline" method="POST" action="/admin/logout">
+                <button class="btn" type="submit">Logout</button>
+            </form>
+            {{end}}
+        </div>
+        {{if eq .template "users"}}
+            {{template "users" .}}
+        {{else if eq .template "dashboard"}}
+            {{template "dashboard" .}}
+        {{else}}
+            {{template "login" .}}
+        {{end}}
+    </div>
+</body>
+</html> 

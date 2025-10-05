@@ -1,0 +1,2 @@
+class DeactivationUserSessionsException(Exception):
+    pass

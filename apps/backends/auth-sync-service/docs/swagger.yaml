@@ -1,0 +1,145 @@
+basePath: /api
+definitions:
+  api.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  models.User:
+    description: User account information
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.UserCredentials:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.UserResponse:
+    description: Response containing user status
+    properties:
+      status:
+        description: |-
+          Status of the user check
+          @Example registered
+        enum:
+        - registered
+        - email_exists
+        - unregistered
+        example: registered
+        type: string
+    type: object
+host: ${API_HOST}
+info:
+  contact: {}
+  description: This is a user service server.
+  title: User Service API
+  version: "1.0"
+paths:
+  /users:
+    patch:
+      consumes:
+      - application/json
+      description: |-
+        Update user password
+        Updates the password for an existing user
+      parameters:
+      - description: User email and new password
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Update user
+      tags:
+      - Authentication
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Create a new user
+        Creates a new user account with email and password
+      parameters:
+      - description: User credentials
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            type: string
+        "400":
+          description: Validation error or user already exists
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Create user
+      tags:
+      - Authentication
+  /users/check:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Check user credentials.Да, POST-запрос) Это сделано намеренно.
+        Validates user credentials and returns authentication status
+      parameters:
+      - description: User email and password
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Status can be: registered, email_exists, or unregistered'
+          schema:
+            $ref: '#/definitions/models.UserResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Check user
+      tags:
+      - Authentication
+swagger: "2.0"

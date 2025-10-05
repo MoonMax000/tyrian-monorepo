@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  color: #ffffff;
+  background: #0b0e11;
+}
+
+input,
+textarea {
+  outline: none;
+}
+
+input:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+:root {
+  /* Primary Color */
+  --color-bg: #0b0e11;
+  --color-darkCharcoal: #181a20;
+  --color-lavenderIndigo: #a06aff;
+
+  /* Supporting Color */
+  --color-moonlessNight: #23252d;
+  --color-onyxGrey: #313338;
+
+  /* Text Color */
+  --color-white: #ffffff;
+  --color-webGray: #808283;
+  --color-gray-light: #b0b0b0;
+  --color-black: #000000;
+  --color-textGray: #b0b0b0;
+
+  /* Indication Color */
+  --color-mountainMeadow: #2ebd85;
+  --color-fieryRose: #ef454a;
+
+  /* Accent Color */
+  --color-orangePeel: #ffa800;
+  --color-cornflowerBlue: #6aa5ff;
+  --color-darkJungleGreen: #1c3430;
+  --color-darkSienna: #3a2127;
+  --color-gunpowder: #2e2744;
+  --color-regaliaPurple: #523a83;
+  --color-yellow: #ffa800;
+}
+
+.scrollbar::-webkit-scrollbar {
+  @apply block w-[6px];
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-opacity-40 transition-all hover:bg-opacity-60;
+}
+
+.text-title {
+  @apply text-[32px] leading-[38px] font-semibold;
+}
+
+.text-basic {
+  @apply text-[15px] leading-[20px] font-semibold;
+}
+
+.text-titletable {
+  @apply text-[12px] leading-[16px] font-semibold uppercase;
+}
+
+.text-table {
+  @apply text-[12px] leading-[16px] font-semibold;
+}
+
+.text-h1 {
+  @apply text-[56px] font-semibold;
+}
+
+.text-h2 {
+  @apply text-[39px] font-semibold;
+}
+
+.text-h3 {
+  @apply text-[31px] font-semibold;
+}
+
+.text-h4 {
+  @apply text-[24px] font-semibold;
+}
+
+.text-sh1 {
+  @apply text-[19px] font-semibold;
+}
+
+.text-body-15 {
+  @apply text-[15px] leading-[20px] font-semibold;
+}
+
+.text-body-12 {
+  @apply text-[12px] leading-[16px] font-semibold;
+}
+
+.text-bold-19 {
+  @apply text-[19px] leading-none font-bold;
+}

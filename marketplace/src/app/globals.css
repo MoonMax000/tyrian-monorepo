@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  color: #ffffff;
+  background: #0b0e11;
+}
+
+input,
+textarea {
+  outline: none;
+}
+
+input:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+:root {
+  --background: #0b0e11;
+  --foreground: #ffffff;
+  --color-bg: #0b0e11;
+  --color-darkCharcoal: #181a20;
+  --color-lavenderIndigo: #a06aff;
+  --color-moonlessNight: #23252d;
+  --color-onyxGrey: #313338;
+  --color-white: #ffffff;
+  --color-webGray: #808283;
+  --color-black: #000000;
+  --color-mountainMeadow: #2ebd85;
+  --color-fieryRose: #ef454a;
+  --color-orangePeel: #ffa800;
+  --color-darkOrange: #ffa80029;
+  --color-cornflowerBlue: #6aa5ff;
+  --color-darkJungleGreen: #1c3430;
+  --color-darkSienna: #3a2127;
+  --color-gunpowder: #2e2744;
+  --color-regaliaPurple: #523a83;
+  --color-lighterAluminum: #b0b0b0;
+  --color-darkPurple: #482090;
+  --color-lightPurple: #a06aff;
+  --color-freshGreen: #16c784;
+  --color-indigo: #a88cff;
+  --color-richBlack: #0c1014;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 14, 17, 0.8);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.text-h1 {
+  @apply text-[56px] font-semibold;
+}
+
+.text-h2 {
+  @apply text-[39px] font-semibold;
+}
+
+.text-h3 {
+  @apply text-[31px] font-semibold;
+}
+
+.text-h4 {
+  @apply text-[24px] font-semibold;
+}
+
+.text-sh1 {
+  @apply text-[19px] font-semibold;
+}
+
+.text-body-15 {
+  @apply text-[15px] leading-[20px] font-medium;
+}
+
+.text-body-12 {
+  @apply text-[12px] leading-[16px] font-semibold;
+}
+
+.text-bold-15 {
+  @apply text-[15px] font-bold;
+}
+
+.text-bold-19 {
+  @apply text-[19px] leading-none font-bold;
+}
+
+.text-bold-24 {
+  @apply text-[24px] font-bold;
+}
+
+.text-bold-31 {
+  @apply text-[31px] font-bold;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-moonlessNight) inset !important;
+  -webkit-text-fill-color: var(--color-white) !important;
+  caret-color: var(--color-white) !important;
+  transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s !important;
+}
+
+input:-moz-autofill,
+input:-moz-autofill:hover,
+input:-moz-autofill:focus,
+input:-moz-autofill:active {
+  filter: none;
+  background-color: var(--color-moonlessNight) !important;
+  color: var(--color-white) !important;
+}
+
+/* Keyframes for gradient animation */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

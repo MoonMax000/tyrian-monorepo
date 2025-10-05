@@ -1,0 +1,31 @@
+{
+  "name": "auth-sync-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backends/auth-sync-service",
+  "projectType": "application",
+  "tags": ["type:backend", "scope:auth", "language:go"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run cmd/app/main.go",
+        "cwd": "apps/backends/auth-sync-service"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o dist/auth-sync ./cmd/app",
+        "cwd": "apps/backends/auth-sync-service"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test ./...",
+        "cwd": "apps/backends/auth-sync-service"
+      }
+    }
+  }
+}
+

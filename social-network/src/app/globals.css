@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0b0e11;
+  --foreground: #ffffff;
+  --color-bg: #0b0e11;
+  --color-darkCharcoal: #181a20;
+  --color-lavenderIndigo: #a06aff;
+  --color-moonlessNight: #23252d;
+  --color-onyxGrey: #313338;
+  --color-white: #ffffff;
+  --color-webGray: #808283;
+  --color-black: #000000;
+  --color-mountainMeadow: #2ebd85;
+  --color-fieryRose: #ef454a;
+  --color-orangePeel: #ffa800;
+  --color-darkOrange: #ffa80029;
+  --color-cornflowerBlue: #6aa5ff;
+  --color-darkJungleGreen: #1c3430;
+  --color-darkSienna: #3a2127;
+  --color-gunpowder: #2e2744;
+  --color-regaliaPurple: #523a83;
+  --color-light-gray: #b0b0b0;
+  --color-lighterAluminum: #b0b0b0;
+  --color-darkPurple: #482090;
+  --color-lightPurple: #a06aff;
+  --color-freshGreen: #16c784;
+  --color-indigo: #a88cff;
+  --color-richBlack: #0c1014;
+}
+body {
+  color: var(--foreground);
+  background: var(--background);
+  overflow-y: scroll;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 16, 20, 0.48);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 1px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #523a83;
+  border-radius: 3px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #523a83;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* like */
+@keyframes like {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes unlike {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-like {
+  animation: like 0.2s ease-in-out;
+}
+
+.animate-unlike {
+  animation: unlike 0.2s ease-in-out;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #523a83;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #523a83;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@tyrian/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for Tyrian Platform",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
+

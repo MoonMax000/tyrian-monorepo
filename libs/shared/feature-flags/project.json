@@ -1,0 +1,19 @@
+{
+  "name": "feature-flags",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/feature-flags/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shared/feature-flags",
+        "main": "libs/shared/feature-flags/src/index.ts",
+        "tsConfig": "libs/shared/feature-flags/tsconfig.lib.json",
+        "assets": ["libs/shared/feature-flags/*.md"]
+      }
+    }
+  }
+}

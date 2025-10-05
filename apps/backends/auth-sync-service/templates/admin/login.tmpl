@@ -1,0 +1,17 @@
+{{define "login"}}
+<div style="max-width: 400px; margin: 40px auto; padding: 20px; border: 1px solid #ddd; border-radius: 4px;">
+    <h1>Admin Login</h1>
+    {{if .error}}
+    <p class="error">{{.error}}</p>
+    {{end}}
+    <form method="POST" action="/admin/login">
+        <div style="margin-bottom: 15px;">
+            <input type="text" name="username" placeholder="Username" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <input type="password" name="password" placeholder="Password" required style="width: 100%; padding: 8px;">
+        </div>
+        <button class="btn" type="submit">Login</button>
+    </form>
+</div>
+{{end}} 

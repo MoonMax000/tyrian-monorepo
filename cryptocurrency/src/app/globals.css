@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  color: #ffffff;
+  background: #0c1014;
+  overflow-x: hidden;
+}
+
+:root {
+  /* Primary Color */
+  --color-bg: #0b0e11;
+  --color-darkCharcoal: #181a20;
+  --color-lavenderIndigo: #a06aff;
+
+  /* Supporting Color */
+  --color-moonlessNight: #23252d;
+  --color-onyxGrey: #313338;
+
+  /* Text Color */
+  --color-white: #ffffff;
+  --color-webGray: #808283;
+  --color-black: #000000;
+
+  /* Indication Color */
+  --color-mountainMeadow: #2ebd85;
+  --color-fieryRose: #ef454a;
+
+  /* Accent Color */
+  --color-orangePeel: #ffa800;
+  --color-cornflowerBlue: #6aa5ff;
+  --color-darkJungleGreen: #1c3430;
+  --color-darkSienna: #3a2127;
+  --color-gunpowder: #2e2744;
+  --color-regaliaPurple: #523a83;
+
+  /* Chart Colors */
+  --color-chartBlue: #6AA6FF;
+  --color-chartPink: #FF6A79;
+  --color-chartGreen: #6AFF9C;
+  --color-chartOrange: #FFB46A;
+  --color-chartPurple: #D1B2FF;
+  --color-chartLightBlue: #A4C8FF;
+  --color-chartLightPink: #FFB3B3;
+  --color-chartMint: #B3FFE0;
+  --color-chartYellow: #FFEBB3;
+}
+
+
+input,
+textarea {
+  outline: none;
+}
+
+input:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+.scrollbar::-webkit-scrollbar {
+  @apply block w-[6px];
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-opacity-40 transition-all hover:bg-opacity-60;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  @apply block w-[6px];
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-[#2EBD85] bg-opacity-40 transition-all hover:bg-opacity-60;
+}
+
+.text-custom {
+  @apply text-[16px] leading-[22px] font-semibold;
+}
+
+.text-small {
+  @apply text-[13px] leading-[18px] font-semibold;
+}
+
+.text-middle {
+  @apply text-[18px] leading-[22px] font-semibold;
+}
+
+.text-smalltable {
+  @apply text-[15px] leading-[20px] font-semibold;
+}
+
+.text-titletable {
+  @apply text-[12px] leading-[16px] font-semibold uppercase;
+}
+
+.text-tabs {
+  @apply text-[19px] leading-[27px] font-bold;
+}
+
+.text-h1 {
+  @apply text-[56px] font-semibold;
+}
+
+.text-h2 {
+  @apply text-[39px] font-semibold;
+}
+
+.text-h3 {
+  @apply text-[31px] font-semibold;
+}
+
+.text-h4 {
+  @apply text-[24px] font-semibold;
+}
+
+.text-sh1 {
+  @apply text-[19px] font-semibold;
+}
+
+.text-body-15 {
+  @apply text-[15px] leading-[20px] font-semibold;
+}
+
+.text-body-12 {
+  @apply text-[12px] leading-[16px] font-semibold;
+}

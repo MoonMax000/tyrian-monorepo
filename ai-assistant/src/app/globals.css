@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0b0e11;
+  --foreground: #ffffff;
+
+  /* Primary Color */
+  --color-bg: #0b0e11;
+  --color-darkCharcoal: #181a20;
+  --color-lavenderIndigo: #a06aff;
+
+  /* Supporting Color */
+  --color-moonlessNight: #23252d;
+  --color-onyxGrey: #313338;
+
+  /* Text Color */
+  --color-white: #ffffff;
+  --color-webGray: #808283;
+  --color-black: #000000;
+
+  /* Indication Color */
+  --color-mountainMeadow: #2ebd85;
+  --color-fieryRose: #ef454a;
+
+  /* Accent Color */
+  --color-orangePeel: #ffa800;
+  --color-darkOrange: #ffa80029;
+  --color-cornflowerBlue: #6aa5ff;
+  --color-darkJungleGreen: #1c3430;
+  --color-darkSienna: #3a2127;
+  --color-gunpowder: #2e2744;
+  --color-regaliaPurple: #523a83;
+  --color-lighterAluminum: #b0b0b0;
+  --color-indigo: #a88cff;
+  --color-darkPurple: #482090;
+  --color-lightPurple: #a06aff;
+  --color-richBlack: #0c1014;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  overflow-y: scroll;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #0c101480 inset !important;
+  -webkit-text-fill-color: var(--color-white) !important;
+  caret-color: var(--color-white) !important;
+  transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s !important;
+}
+
+input,
+textarea {
+  color: var(--color-white) !important;
+  background-color: #0c101480 !important;
+  backdrop-filter: blur(100px);
+}
+
+input:-moz-autofill,
+input:-moz-autofill:hover,
+input:-moz-autofill:focus,
+input:-moz-autofill:active {
+  filter: none;
+  background-color: #0c101480 !important;
+  backdrop-filter: blur(100px);
+
+  color: var(--color-white) !important;
+}
+
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 16, 20, 0.48);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@layer components {
+  .container-card {
+    @apply border border-[#181B22] rounded-[24px] max-w-[1340px] bg-[#0C101480] backdrop-blur-[100px];
+  }
+
+  .search-input {
+    @apply bg-transparent backdrop-filter-none;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+  }
+
+  .search-wrapper {
+    background-color: rgba(12, 16, 20, 0.48);
+    backdrop-filter: blur(100px);
+  }
+}

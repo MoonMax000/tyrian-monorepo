@@ -1,0 +1,37 @@
+'use client';
+
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import NewSidebar from '@/components/Layout/NewSidebar';
+import RightSidebar from '@/components/Layout/RightSidebar';
+
+// Dynamic import для устранения hydration error
+const Header = dynamic(() => import('@tyrian/ui').then(mod => ({ default: mod.Header })), {
+  ssr: false,
+  loading: () => <div className="h-16 bg-black/80 backdrop-blur-xl" />
+});
+
+const Footer = dynamic(() => import('@tyrian/ui').then(mod => ({ default: mod.Footer })), {
+  ssr: false
+});
+
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  const [rightSidebarOpen, setRightSidebarOpen] = useState<boolean>(false);
+
+  return (
+    <div className='relative min-h-screen text-white font-nunito flex flex-col overflow-x-hidden bg-black'>
+      <Header onMenuClick={() => setRightSidebarOpen(!rightSidebarOpen)} />
+      <div className='relative z-10 flex justify-start pt-16 mb-60 overflow-x-visible'>
+        <NewSidebar />
+        <main className='flex-1 min-w-0 px-6 lg:px-8'>
+          <div id='portal-root' />
+          <div className='min-h-[calc(100vh-4rem)] flex flex-col'>
+            <div className='flex-1'>{children}</div>
+          </div>
+        </main>
+        <RightSidebar isOpen={rightSidebarOpen} onClose={() => setRightSidebarOpen(false)} />
+      </div>
+    </div>
+  );
+}
+

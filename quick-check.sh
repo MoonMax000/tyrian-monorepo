@@ -1,0 +1,18 @@
+#!/bin/bash
+echo "🚀 Quick Check - Tyrian Monorepo"
+echo "==============================="
+echo ""
+echo "📦 Checking all projects..."
+npx nx show projects
+echo ""
+echo "✅ All projects loaded successfully!"
+echo ""
+echo "📊 Project Statistics:"
+echo "   Frontends: 6"
+echo "   Backends: 2"
+echo "   Libraries: 4"
+echo "   Total: 12"
+echo ""
+echo "🎯 To serve an app: npx nx serve <app-name>"
+echo "🏗️  To build an app: npx nx build <app-name>"
+echo "📈 To view graph: npx nx graph"

@@ -1,0 +1,319 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Tyrian Trade Design System
+   * Color variables expressed as HSL values for Tailwind compatibility
+   */
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 259 100% 83%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 259 49% 34%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 13% 15%;
+    --muted-foreground: 0 0% 69%;
+
+    --accent: 259 100% 83%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 3 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 15%;
+    --input: 220 13% 15%;
+    --ring: 259 100% 83%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 69%;
+    --sidebar-primary: 259 100% 83%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 13% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 13% 15%;
+    --sidebar-ring: 259 100% 83%;
+
+    /* Tyrian Trade specific variables */
+    --tyrian-black: 0 0% 0%;
+    --tyrian-white: 0 0% 100%;
+    --tyrian-purple-primary: 259 100% 83%;
+    --tyrian-purple-secondary: 259 49% 34%;
+    --tyrian-purple-background: 258 40% 34%;
+    --tyrian-purple-dark: 210 9% 13%;
+    --tyrian-gray-light: 0 0% 76%;
+    --tyrian-gray-medium: 0 0% 69%;
+    --tyrian-gray-dark: 220 6% 20%;
+    --tyrian-gray-darker: 220 13% 15%;
+    --tyrian-background-primary: 218 27% 7%;
+    --tyrian-red-accent: 3 84% 60%;
+    --tyrian-gold-binance: 47 85% 50%;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 259 100% 83%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 259 49% 34%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 13% 15%;
+    --muted-foreground: 0 0% 69%;
+
+    --accent: 259 100% 83%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 3 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 15%;
+    --input: 220 13% 15%;
+    --ring: 259 100% 83%;
+
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 69%;
+    --sidebar-primary: 259 100% 83%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 13% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 13% 15%;
+    --sidebar-ring: 259 100% 83%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-tyrian-black text-tyrian-white font-nunito;
+    background-color: #000000;
+    color: #ffffff;
+    font-family:
+      "Nunito Sans",
+      -apple-system,
+      Roboto,
+      Helvetica,
+      sans-serif;
+  }
+
+  html {
+    background-color: #000000;
+  }
+
+  /* Ensure proper font weights */
+  .font-normal {
+    font-weight: 400;
+  }
+  .font-medium {
+    font-weight: 500;
+  }
+  .font-semibold {
+    font-weight: 600;
+  }
+  .font-bold {
+    font-weight: 700;
+  }
+  .font-extrabold {
+    font-weight: 800;
+  }
+}
+
+@layer components {
+  /* Glassmorphism card styles */
+  .glass-card {
+    @apply bg-tyrian-background-card backdrop-blur-50 border border-tyrian-gray-darker;
+  }
+  .glass-card-purple {
+    @apply bg-tyrian-background-card backdrop-blur-50 border border-tyrian-purple-background;
+  }
+
+  /* Button variants */
+  .btn-primary {
+    @apply bg-gradient-to-r from-tyrian-purple-primary to-tyrian-purple-secondary text-white font-bold;
+  }
+  .btn-glass {
+    @apply glass-card text-white border-tyrian-gray-darker;
+  }
+
+  /* Interactive hover utility (applied to all clickable items) */
+  .hover-lift {
+    transition:
+      transform 200ms ease,
+      box-shadow 200ms ease,
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease,
+      opacity 200ms ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 0 1px rgba(160, 106, 255, 0.35),
+      0 0 24px rgba(160, 106, 255, 0.15);
+  }
+  .hover-lift:active {
+    transform: translateY(0);
+  }
+
+  /* Subtle animated gradient for CTA buttons */
+  .bg-tyrian-gradient-animated {
+    background: linear-gradient(270deg, #a06aff 0%, #482090 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 6s ease infinite;
+  }
+
+  /* Subtle pulse for charts/bars */
+  .animate-pulse-subtle {
+    animation: pulseSubtle 3.2s ease-in-out infinite alternate;
+  }
+
+  /* Animated line dash for SVG lines */
+  .chart-line {
+    stroke-dasharray: 6 6;
+    animation: dashMove 10s linear infinite;
+  }
+}
+
+@layer utilities {
+  /* Custom gradient backgrounds */
+  .bg-tyrian-gradient {
+    background: linear-gradient(270deg, #a06aff 0%, #482090 100%);
+  }
+  .bg-tyrian-sidebar-gradient {
+    background: linear-gradient(
+      180deg,
+      rgba(82, 58, 131, 0) 0%,
+      #a06aff 50%,
+      rgba(82, 58, 131, 0) 100%
+    );
+  }
+
+  /* Backdrop blur utilities */
+  .backdrop-blur-32 {
+    backdrop-filter: blur(32px);
+  }
+  .backdrop-blur-58 {
+    backdrop-filter: blur(58.333px);
+  }
+  .backdrop-blur-120 {
+    backdrop-filter: blur(120px);
+  }
+
+  /* Text gradient */
+  .text-gradient {
+    background: linear-gradient(270deg, #a06aff 0%, #482090 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Hide scrollbars */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Custom scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(160, 106, 255, 0.3) transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(160, 106, 255, 0.3);
+    border-radius: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(160, 106, 255, 0.5);
+  }
+
+  /* External project helpers for navbar and right sidebar */
+  .container-card {
+    @apply border border-[#181B22] rounded-[24px] bg-[#0C101480] backdrop-blur-[100px];
+  }
+
+  /* Color variables from original repo */
+  :root {
+    --color-webGray: #808283;
+    --color-mountainMeadow: #2ebd85;
+    --color-fieryRose: #ef454a;
+  }
+
+  .search-input {
+    @apply bg-transparent;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+  }
+
+  .search-wrapper {
+    background-color: rgba(12, 16, 20, 0.48);
+    backdrop-filter: blur(100px);
+  }
+}
+
+/* Keyframes */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulseSubtle {
+  0% {
+    opacity: 0.96;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-0.5px);
+  }
+}
+
+@keyframes dashMove {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1000;
+  }
+}
