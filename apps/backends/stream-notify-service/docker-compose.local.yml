@@ -1,0 +1,28 @@
+version: '3.7'
+
+# Settings and configurations that are common for all containers
+x-containers-common: &containers-common
+  logging:
+    driver: "json-file"
+    options:
+      # The same as in promtail configuration
+      tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+
+services:
+  notify-service:
+    <<: *containers-common
+    build:
+      context: .
+      dockerfile: Dockerfile
+    mem_reservation: "64M"
+    mem_limit: "128M"
+    env_file:
+      - .env
+    ports:
+      - "8004:8080"
+
+networks:
+  default:
+    name: streaming
+    # Network defined in docker-compose.local.yml for project streaming-auth-service
+    external: true

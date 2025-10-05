@@ -1,0 +1,15 @@
+# env file
+.env
+.envDebug
+
+# IDE specific
+.vscode
+.idea
+
+# Debug artifacts
+__debug*
+
+# Local artifacts
+.history
+.data
+.tmp

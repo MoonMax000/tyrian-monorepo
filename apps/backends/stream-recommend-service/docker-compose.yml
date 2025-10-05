@@ -1,0 +1,21 @@
+services:
+  recommend-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    env_file:
+      - .env
+    ports:
+      - "${HTTP_PORT:-8007}:${HTTP_PORT:-8007}"
+    labels:
+      - "a=streaming"
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/api/v1/channels`) || PathPrefix(`/api/v1/categories`) || PathPrefix(`/api/v1/tags`)"
+      - "traefik.http.routers.auth.entrypoints=web"
+
+networks:
+  default:
+    name: streaming
+    external: true

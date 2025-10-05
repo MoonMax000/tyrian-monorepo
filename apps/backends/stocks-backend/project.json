@@ -1,0 +1,38 @@
+{
+  "name": "stocks-backend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backends/stocks-backend/core",
+  "projectType": "application",
+  "tags": ["type:backend", "scope:stocks", "language:python"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd core && python manage.py runserver 8020",
+        "cwd": "apps/backends/stocks-backend"
+      }
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd core && python manage.py migrate",
+        "cwd": "apps/backends/stocks-backend"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pytest core/",
+        "cwd": "apps/backends/stocks-backend"
+      }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t tyrian/stocks-backend -f core/Dockerfile .",
+        "cwd": "apps/backends/stocks-backend"
+      }
+    }
+  }
+}
+

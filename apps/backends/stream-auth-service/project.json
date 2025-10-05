@@ -1,0 +1,38 @@
+{
+  "name": "stream-auth-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backends/stream-auth-service",
+  "projectType": "application",
+  "tags": ["type:backend", "scope:streaming", "language:go"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run cmd/app/main.go",
+        "cwd": "apps/backends/stream-auth-service"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o dist/stream-auth ./cmd/app",
+        "cwd": "apps/backends/stream-auth-service"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test ./...",
+        "cwd": "apps/backends/stream-auth-service"
+      }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t tyrian/stream-auth-service .",
+        "cwd": "apps/backends/stream-auth-service"
+      }
+    }
+  }
+}
+

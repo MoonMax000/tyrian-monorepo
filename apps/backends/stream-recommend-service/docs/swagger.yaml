@@ -1,0 +1,522 @@
+basePath: /api/v1
+definitions:
+  model.Category:
+    description: Информация о категории канала
+    properties:
+      avatar_url:
+        type: string
+      created:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        maxLength: 50
+        minLength: 3
+        type: string
+      updated:
+        type: string
+    required:
+    - name
+    type: object
+  types.Channel:
+    properties:
+      avatar_url:
+        type: string
+      cover_url:
+        type: string
+      description:
+        type: string
+      donation_url:
+        type: string
+      id:
+        type: string
+      stream:
+        allOf:
+        - $ref: '#/definitions/types.StreamData'
+        description: Categories      []string    `json:"categories"`
+      subscribed:
+        type: boolean
+      subscriber_count:
+        type: integer
+      username:
+        type: string
+    type: object
+  types.ChannelIdsRequest:
+    properties:
+      channel_ids:
+        items:
+          type: string
+        type: array
+    type: object
+  types.ChannelResponse:
+    properties:
+      data:
+        $ref: '#/definitions/types.Channel'
+      status:
+        type: string
+    type: object
+  types.ChannelsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Channel'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationResponse'
+      status:
+        type: string
+    type: object
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FailureResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.PaginationResponse:
+    properties:
+      current_page:
+        type: integer
+      page_size:
+        type: integer
+      total_pages:
+        type: integer
+      total_records:
+        type: integer
+    type: object
+  types.SearchChannelsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.SearchResult'
+        type: array
+      status:
+        type: string
+    type: object
+  types.SearchResult:
+    properties:
+      channel:
+        $ref: '#/definitions/types.Channel'
+      matched_on:
+        description: '"category", "tag", "stream_name", "username"'
+        type: string
+      score:
+        description: 'опционально: для ранжирования'
+        type: integer
+    type: object
+  types.StreamData:
+    properties:
+      is_online:
+        type: boolean
+      last_updated_at:
+        type: integer
+      stream_category:
+        type: string
+      stream_name:
+        type: string
+      stream_tags:
+        items:
+          type: string
+        type: array
+      translation_url:
+        type: string
+      viewer_count:
+        type: integer
+    type: object
+  types.SubscribeRequest:
+    properties:
+      channel_id:
+        type: string
+    type: object
+  types.Subscriber:
+    properties:
+      avatar_url:
+        type: string
+      id:
+        type: string
+      is_streamer:
+        type: boolean
+      is_subscribed:
+        type: boolean
+      stream:
+        $ref: '#/definitions/types.StreamData'
+      subscriber_count:
+        type: integer
+      username:
+        type: string
+    type: object
+  types.SubscriberListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Subscriber'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationResponse'
+      status:
+        type: string
+    type: object
+  types.SubscriptionsResponse:
+    properties:
+      data:
+        items:
+          type: string
+        type: array
+      status:
+        type: string
+    type: object
+  types.SuccessResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.UnsubscribeRequest:
+    properties:
+      channel_id:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an streaming API
+  title: Streaming API
+  version: "1.0"
+paths:
+  /categories:
+    get:
+      description: Возвращает список всех категорий video (замоканные данные)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Category'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все категории
+      tags:
+      - categories
+  /channels:
+    get:
+      consumes:
+      - application/json
+      description: Returns paginated list of all streamer channels with subscriber
+        counts
+      parameters:
+      - description: Category name
+        in: query
+        name: category
+        type: string
+      - description: Tag name
+        in: query
+        name: tag
+        type: string
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Sort type: normal or recommended (default: normal)'
+        in: query
+        name: sort_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with pagination
+          schema:
+            $ref: '#/definitions/types.ChannelsResponse'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Get all streamer channels
+      tags:
+      - channels
+  /channels/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Returns single channel information with subscriber count. Channel
+        can be looked up by either ID or username.
+      parameters:
+      - description: Channel ID or username
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ChannelResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Get channel by ID or username
+      tags:
+      - channels
+  /channels/batch:
+    post:
+      consumes:
+      - application/json
+      description: Returns channel information for given channel IDs
+      parameters:
+      - description: Channel IDs
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ChannelIdsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ChannelsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Get multiple channels
+      tags:
+      - channels
+  /channels/me/subscribe:
+    post:
+      consumes:
+      - application/json
+      description: Subscribe authenticated user to a channel
+      parameters:
+      - description: Subscribe Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.SubscribeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Subscribe to channel
+      tags:
+      - channels
+  /channels/me/subscribers:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of users subscribed to the authenticated streamer's
+        channel
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
+      - description: Sort field (username or subscriber_count)
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction (asc or desc)
+        in: query
+        name: sort_dir
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SubscriberListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get channel subscribers
+      tags:
+      - channels
+  /channels/me/subscriptions:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of channels the user is subscribed to
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SubscriptionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user's subscriptions
+      tags:
+      - channels
+  /channels/me/unsubscribe:
+    post:
+      consumes:
+      - application/json
+      description: Unsubscribe authenticated user from a channel
+      parameters:
+      - description: Unsubscribe Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UnsubscribeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Unsubscribe from channel
+      tags:
+      - channels
+  /channels/search:
+    get:
+      consumes:
+      - application/json
+      description: Searches for live streamer channels by substring in category, tag,
+        stream name, or username. Returns up to 10 best matches.
+      parameters:
+      - description: Search query (by category, tag, stream name, or username)
+        in: query
+        name: q
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of matching channels with match type
+          schema:
+            $ref: '#/definitions/types.SearchChannelsResponse'
+        "400":
+          description: Invalid request or empty query
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Search streamer channels
+      tags:
+      - channels
+  /tags:
+    get:
+      description: Returns list of all unique tags used in live streams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tags
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Get all unique stream tags
+      tags:
+      - tags
+securityDefinitions:
+  CookieAuth:
+    description: Сессионная аутентификация через куку sessionid
+    in: cookie
+    name: sessionid
+    type: apiKey
+swagger: "2.0"

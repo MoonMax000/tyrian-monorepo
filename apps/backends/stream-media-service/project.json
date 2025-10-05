@@ -1,0 +1,38 @@
+{
+  "name": "stream-media-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backends/stream-media-service",
+  "projectType": "application",
+  "tags": ["type:backend", "scope:streaming", "language:go"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run cmd/app/main.go",
+        "cwd": "apps/backends/stream-media-service"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o dist/media-service ./cmd/app",
+        "cwd": "apps/backends/stream-media-service"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test ./...",
+        "cwd": "apps/backends/stream-media-service"
+      }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t tyrian/stream-media-service .",
+        "cwd": "apps/backends/stream-media-service"
+      }
+    }
+  }
+}
+

@@ -1,0 +1,1716 @@
+basePath: /api/v1
+definitions:
+  handler.UserControlRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  types.AuthServiceUserInfo:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FailureResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FileUploadResponse:
+    properties:
+      url:
+        type: string
+    type: object
+  types.LikeRequest:
+    properties:
+      channel_id:
+        type: string
+    type: object
+  types.ListedRoleRequestInfo:
+    properties:
+      collectionId:
+        type: string
+      collectionName:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      role:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+      сomment:
+        type: string
+    type: object
+  types.ListedUserInfo:
+    properties:
+      avatar:
+        type: string
+      collectionId:
+        type: string
+      collectionName:
+        type: string
+      cover:
+        type: string
+      created:
+        type: string
+      description:
+        type: string
+      donation:
+        type: string
+      email:
+        type: string
+      email_confirmed:
+        type: boolean
+      id:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      updated:
+        type: string
+      username:
+        type: string
+    type: object
+  types.LoginRequest:
+    properties:
+      identity:
+        type: string
+      password:
+        type: string
+    type: object
+  types.LoginSuccessData:
+    properties:
+      token:
+        type: string
+    type: object
+  types.LoginSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/types.LoginSuccessData'
+      status:
+        type: string
+    type: object
+  types.PasswordChangeRequest:
+    properties:
+      new_password:
+        type: string
+      new_password_confirm:
+        type: string
+      old_password:
+        type: string
+    type: object
+  types.PasswordChangeResetConfirmRequest:
+    properties:
+      new_password:
+        type: string
+      new_password_confirm:
+        type: string
+      token:
+        type: string
+    type: object
+  types.PasswordChangeResetRequest:
+    properties:
+      email:
+        type: string
+    type: object
+  types.Profile:
+    properties:
+      avatar_url:
+        type: string
+      cover_url:
+        type: string
+      description:
+        type: string
+      donation_url:
+        type: string
+      email:
+        type: string
+      email_confirmed:
+        type: boolean
+      id:
+        type: string
+      permits:
+        items:
+          type: string
+        type: array
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+  types.ProfileUpdateRequest:
+    properties:
+      description:
+        type: string
+      donation_url:
+        type: string
+      username:
+        type: string
+    type: object
+  types.RegisterRequest:
+    properties:
+      confirmPassword:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  types.ResendEmailConfirmationRequest:
+    properties:
+      email:
+        type: string
+    type: object
+  types.RoleRequestListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/types.ListedRoleRequestInfo'
+        type: array
+      page:
+        type: integer
+      perPage:
+        type: integer
+      status:
+        type: string
+      totalItems:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  types.StatisticsEntry:
+    properties:
+      avatar:
+        type: string
+      cover:
+        type: string
+      created:
+        type: string
+      description:
+        type: string
+      donation:
+        type: string
+      email:
+        type: string
+      email_confirmed:
+        type: boolean
+      id:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      updated:
+        type: string
+      username:
+        type: string
+    type: object
+  types.StatisticsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/types.StatisticsEntry'
+        type: array
+      page:
+        type: integer
+      perPage:
+        type: integer
+      status:
+        type: string
+      totalItems:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  types.StreamPlanSettingsResponse:
+    properties:
+      description:
+        type: string
+      end_time:
+        type: string
+      game:
+        type: string
+      start_time:
+        type: string
+    type: object
+  types.StreamPlanSettingsUpdateRequest:
+    properties:
+      description:
+        type: string
+      end_time:
+        type: string
+      game:
+        type: string
+      start_time:
+        type: string
+    type: object
+  types.StreamSettingsResponse:
+    properties:
+      audio_codec:
+        type: string
+      audio_quality:
+        type: string
+      bitrate:
+        type: integer
+      frame_rate:
+        type: integer
+      resolution:
+        type: string
+      video_codec:
+        type: string
+    type: object
+  types.StreamSettingsUpdateRequest:
+    properties:
+      audio_codec:
+        type: string
+      audio_quality:
+        type: string
+      bitrate:
+        type: integer
+      frame_rate:
+        type: integer
+      resolution:
+        type: string
+      video_codec:
+        type: string
+    type: object
+  types.SubscribeRequest:
+    properties:
+      channel_id:
+        type: string
+    type: object
+  types.Subscription:
+    properties:
+      channel_id:
+        type: string
+      channel_name:
+        type: string
+      subscribed_at:
+        type: string
+    type: object
+  types.SubscriptionsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Subscription'
+        type: array
+      status:
+        type: string
+    type: object
+  types.SuccessResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.UpdateRoleRequest:
+    properties:
+      status:
+        type: string
+    type: object
+  types.UpdateUserRolesRequest:
+    properties:
+      roles:
+        items:
+          type: string
+        type: array
+      user_id:
+        type: string
+    type: object
+  types.UserInfo:
+    properties:
+      avatar:
+        type: string
+      cover:
+        type: string
+      created:
+        type: string
+      description:
+        type: string
+      donation:
+        type: string
+      email:
+        type: string
+      email_confirmed:
+        type: boolean
+      id:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      updated:
+        type: string
+      username:
+        type: string
+    type: object
+  types.UserListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/types.ListedUserInfo'
+        type: array
+      page:
+        type: integer
+      perPage:
+        type: integer
+      status:
+        type: string
+      totalItems:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  types.UserUpdateRequest:
+    properties:
+      avatar:
+        type: string
+      cover:
+        type: string
+      description:
+        type: string
+      donation:
+        type: string
+      email:
+        type: string
+      email_confirmed:
+        type: boolean
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an streaming API
+  title: Streaming API
+  version: "1.0"
+paths:
+  /admin/admins:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of admins
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
+      - description: Sort field
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction (asc or desc)
+        in: query
+        name: sort_dir
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get admins
+      tags:
+      - admin
+  /admin/admins/{id}:
+    get:
+      description: Returns user info
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListedUserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get admin by id
+      tags:
+      - admin
+    patch:
+      consumes:
+      - application/json
+      description: Admin update
+      parameters:
+      - description: user info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UserUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListedUserInfo'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: admin update
+      tags:
+      - admin
+  /admin/change-role-requests:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of admins
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
+      - description: Sort field
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction (asc or desc)
+        in: query
+        name: sort_dir
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.RoleRequestListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get admins
+      tags:
+      - admin
+  /admin/change-role-requests/{id}:
+    get:
+      description: Returns role request info
+      parameters:
+      - description: role request id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListedRoleRequestInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get admin by id
+      tags:
+      - admin
+    patch:
+      consumes:
+      - application/json
+      description: ChangeRoleRequest update
+      parameters:
+      - description: role request id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: role request info for updating, for approved to streamer
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListedRoleRequestInfo'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: admin update
+      tags:
+      - admin
+  /admin/service/users:
+    patch:
+      consumes:
+      - application/json
+      description: Patch user
+      parameters:
+      - description: user info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.AuthServiceUserInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserInfo'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: 'Patch user (if request from ip list: USER_SERVICE_IP_LIST environment
+        variable) omit control for session'
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: Create user
+      parameters:
+      - description: user info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.AuthServiceUserInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserInfo'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: 'Create user (if request from ip list: USER_SERVICE_IP_LIST environment
+        variable) omit control for session'
+      tags:
+      - admin
+  /admin/statistics:
+    get:
+      description: Returns statistics by users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StatisticsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get statistics
+      tags:
+      - admin
+  /admin/streamers:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of streamers
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
+      - description: Sort field
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction (asc or desc)
+        in: query
+        name: sort_dir
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get streamers
+      tags:
+      - admin
+  /admin/streamers/{id}:
+    get:
+      description: Returns user info
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListedUserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get streamer by id
+      tags:
+      - admin
+    patch:
+      consumes:
+      - application/json
+      description: Streamer update
+      parameters:
+      - description: id streamer
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: user info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UserUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListedUserInfo'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: streamer update
+      tags:
+      - admin
+  /admin/users:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of users
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: perPage
+        type: integer
+      - description: 'Sort fields and directions (example: +username)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get users
+      tags:
+      - admin
+  /admin/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: User delete
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListedUserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: User delete
+      tags:
+      - admin
+    get:
+      description: Returns user info
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListedUserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get user by id
+      tags:
+      - admin
+    patch:
+      consumes:
+      - application/json
+      description: User update
+      parameters:
+      - description: user info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UserUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListedUserInfo'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: User update
+      tags:
+      - admin
+  /admin/users/roles:
+    post:
+      consumes:
+      - application/json
+      description: Update user roles
+      parameters:
+      - description: info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateUserRolesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Profile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Update user roles
+      tags:
+      - admin
+  /auth/as-user-control:
+    patch:
+      consumes:
+      - application/json
+      description: Create new user or update existing user's password without email
+        confirmation
+      parameters:
+      - description: User credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UserControlRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password updated
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "201":
+          description: User created
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+      summary: Create or update user
+      tags:
+      - auth
+    post:
+      consumes:
+      - application/json
+      description: Create new user or update existing user's password without email
+        confirmation
+      parameters:
+      - description: User credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UserControlRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password updated
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "201":
+          description: User created
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+      summary: Create or update user
+      tags:
+      - auth
+  /auth/email/confirm:
+    get:
+      description: Email confirm via emailed link
+      parameters:
+      - description: string valid
+        in: query
+        maxLength: 100
+        minLength: 100
+        name: string
+        type: string
+        x-abc: def
+        x-nullable: true
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Email Confirm
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: username or email
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.LoginSuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Login
+      tags:
+      - auth
+  /auth/password/change:
+    post:
+      consumes:
+      - application/json
+      description: Password Change
+      parameters:
+      - description: password change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.PasswordChangeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Password Change
+      tags:
+      - auth
+  /auth/password/reset:
+    post:
+      consumes:
+      - application/json
+      description: Send link to email for reset password
+      parameters:
+      - description: password reset
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.PasswordChangeResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Password Reset
+      tags:
+      - auth
+  /auth/password/reset/confirm:
+    post:
+      consumes:
+      - application/json
+      description: Password Reset Confirm
+      parameters:
+      - description: password reset confirm
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.PasswordChangeResetConfirmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Password Reset Confirm
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      description: Refresh user info in cache
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Update user info by session identity from cookie
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register
+      parameters:
+      - description: username or email
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.LoginSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Register
+      tags:
+      - auth
+  /auth/register/resend-confirm-email:
+    post:
+      consumes:
+      - application/json
+      description: Send email message with email confirmation link
+      parameters:
+      - description: email resend confirm
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ResendEmailConfirmationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Email Resend Confirm
+      tags:
+      - auth
+  /profile/get-email/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get User Email by user ID (UUID)
+      parameters:
+      - description: user id (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Get User Email
+      tags:
+      - profile
+  /profile/me:
+    get:
+      consumes:
+      - application/json
+      description: Profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Profile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Profile
+      tags:
+      - profile
+    patch:
+      consumes:
+      - application/json
+      description: Profile update
+      parameters:
+      - description: info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ProfileUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Profile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Profile update
+      tags:
+      - profile
+    put:
+      consumes:
+      - application/json
+      description: Profile update
+      parameters:
+      - description: info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ProfileUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Profile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Profile update
+      tags:
+      - profile
+  /profile/me/like:
+    post:
+      consumes:
+      - application/json
+      description: Profile like
+      parameters:
+      - description: profile like
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.LikeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Profile like
+      tags:
+      - profile
+  /profile/me/set-avatar:
+    put:
+      consumes:
+      - multipart/form-data
+      description: Set profile avatar
+      parameters:
+      - description: this is a test file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.FileUploadResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Set profile avatar
+      tags:
+      - profile
+  /profile/me/set-cover:
+    put:
+      consumes:
+      - multipart/form-data
+      description: Set profile cover
+      parameters:
+      - description: this is a test file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.FileUploadResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Set profile cover
+      tags:
+      - profile
+  /profile/me/subscribe:
+    post:
+      consumes:
+      - application/json
+      description: Profile subscribe
+      parameters:
+      - description: profile subscribe
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.SubscribeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Profile subscribe
+      tags:
+      - profile
+  /profile/me/subscriptions:
+    get:
+      consumes:
+      - application/json
+      description: Profile subscription
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SubscriptionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Profile subscription
+      tags:
+      - profile
+  /stream/plan:
+    get:
+      consumes:
+      - application/json
+      description: Stream plan settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamPlanSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Stream plan settings
+      tags:
+      - stream
+    patch:
+      consumes:
+      - application/json
+      description: Stream plan settings change
+      parameters:
+      - description: stream plan settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.StreamPlanSettingsUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamPlanSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Stream plan settings change
+      tags:
+      - stream
+    put:
+      consumes:
+      - application/json
+      description: Stream plan settings change
+      parameters:
+      - description: stream plan settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.StreamPlanSettingsUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamPlanSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Stream plan settings change
+      tags:
+      - stream
+  /stream/settings:
+    get:
+      consumes:
+      - application/json
+      description: Stream settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Stream settings
+      tags:
+      - stream
+    patch:
+      consumes:
+      - application/json
+      description: Stream settings change
+      parameters:
+      - description: stream settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.StreamSettingsUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Stream settings change
+      tags:
+      - stream
+    put:
+      consumes:
+      - application/json
+      description: Stream settings change
+      parameters:
+      - description: stream settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.StreamSettingsUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Stream settings change
+      tags:
+      - stream
+securityDefinitions:
+  CookieAuth:
+    description: Сессионная аутентификация через куку sessionid
+    in: cookie
+    name: sessionid
+    type: apiKey
+swagger: "2.0"

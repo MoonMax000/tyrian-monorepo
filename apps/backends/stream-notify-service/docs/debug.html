@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Streaming chat service debug</title>
+    <script>
+      let chat
+      append = function (text) {
+        document
+          .getElementById("websocketEvents")
+          .insertAdjacentHTML("beforeend", "<li>" + text + "</li>")
+      }
+
+      function reconnect(event) {
+        // const timestamp = document.getElementById("timestamp").value
+        const sessionid = document.getElementById("sessionid").value || null;
+        
+        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+        chat = new WebSocket(`${protocol}://${window.location.host}/ws`, ["chat", sessionid]);
+
+        chat.onmessage = function (event) {
+          append("📨 Received: " + event.data)
+        }
+        chat.onopen = function () {
+          append("🚀 Connected to WebSocket!")
+        }
+        chat.onclose = function () {
+          append("🔌 Connection closed")
+        }
+        chat.onerror = function () {
+          append("❌ Error happens")
+        }
+      }
+
+      function sendMessage(event) {
+        if (!chat || chat.readyState !== WebSocket.OPEN) {
+          append("⚠️ Not connected to WebSocket!")
+          return
+        }
+        
+        const message = document.getElementById("messageBody").value
+        chat.send(message)
+        append("📤 Sent: " + message)
+        document.getElementById("messageBody").value = ""
+      }
+
+        // Шаблоны JSON
+        const templates = {
+          filters: `{"type": "filters", "subscription": true, "status_stream": true}`,
+          markread: `{"type": "markread", "notifi": ["c0b83481-157d-4fc6-976a-4e8965b78880"]}`
+        };
+
+        // Установка шаблона в поле ввода
+        function setTemplate(type) {
+          const input = document.getElementById("messageBody");
+          if (templates[type]) {
+            input.value = templates[type];
+          }
+        }
+        
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+  </head>
+
+  <body>
+    <main class="container">
+      <div>
+        <label for="sessionid">sessionid</label>
+        <input value="abc123" type="text" id="sessionid" />
+        <input type="button" value="Connect" onclick="reconnect(event)" />
+      </div>
+
+      <div>
+        <label for="messageBody">Message:</label>
+        <input type="text" id="messageBody" value='{"type": "filters", "subscription": true, "status_stream": true}' />
+
+        <!-- Кнопки для выбора шаблонов -->
+        <div style="margin-top: 0.5em;">
+          <button type="button" onclick="setTemplate('filters')">Filters Example</button>
+          <button type="button" onclick="setTemplate('markread')">markread Example</button>
+        </div>
+
+        <input type="button" value="Send" onclick="sendMessage(event)" />
+      </div>
+      
+      <h3>WebSocket Events:</h3>
+      <ul id="websocketEvents"></ul>
+    </main>
+  </body>
+</html>

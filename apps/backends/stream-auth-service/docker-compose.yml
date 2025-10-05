@@ -1,0 +1,122 @@
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - "${HTTP_PORT:-8002}:${HTTP_PORT:-8002}"
+    labels:
+      - "a=streaming"
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/api/v1/auth`)"
+      - "traefik.http.routers.auth.entrypoints=web"
+
+  redis:
+    image: docker.io/redis:latest
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+
+
+  postgres:
+    image: docker.io/postgres:latest
+    volumes:
+      - bc_gateway_postgres_data:/var/lib/postgresql/data
+      - bc_gateway_postgres_data_backups:/backups
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: docker.io/rabbitmq:4.0.4-management-alpine
+    mem_limit: 356m
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS= -rabbit log_levels [{connection,error},{default,error}] -rabbit disk_free_limit 134217728
+    volumes:
+      - bc_gateway_rabbit_mq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  # Balancer and unified swagger docs
+  traefik:
+    image: traefik:latest
+    restart: unless-stopped
+    command:
+      - --api.dashboard=true
+      - --api.debug=true
+      # Включить Dashboard (только для разработки!)
+      - --api.insecure=true
+      # Включить автоматическое обнаружение Docker-сервисов
+      - --providers.docker=true
+      # Логи для отладки
+      - --log.level=TRACE
+      - --accesslog=true
+      - --log.maxsize=1
+      # Только явно разрешённые сервисы
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.constraints=Label(`a`,`streaming`)
+      # Основной HTTP
+      - --entrypoints.web.address=:80
+      # Ссылка на plugin
+      - --experimental.plugins.swagger-ring.moduleName=github.com/usalko/swagger-ring
+      - --experimental.plugins.swagger-ring.version=v0.1.10
+    ports:
+      - "${HTTP_PORT_EXT:-8080}:80"    # Balancer port
+      - "${HTTP_PORT_EXT_TA:-8090}:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "a=streaming"
+      - "traefik.enable=true"
+      - "traefik.http.routers.docs-router.rule=PathPrefix(`/api/v1/docs`)"
+      - "traefik.http.routers.docs-router.service=docs-service"
+      - "traefik.http.routers.docs-router.entrypoints=web"
+      - "traefik.http.routers.docs-router.middlewares=swagger"
+      - "traefik.http.services.docs-service.loadBalancer.server.url=http://whoami"
+      - "traefik.http.middlewares.swagger.plugin.swagger-ring.path=/api/v1/docs"
+      - "traefik.http.middlewares.swagger.plugin.swagger-ring.docs[0].path=http://auth-service:${HTTP_PORT:-8002}/api/v1/docs/swagger.yaml"
+      - "traefik.http.middlewares.swagger.plugin.swagger-ring.docs[0].path=http://recommend-service:${HTTP_RECOMMEND_SERVICE_PORT:-8007}/api/v1/docs/swagger.yaml"
+
+volumes:
+  bc_gateway_postgres_data: {}
+  bc_gateway_postgres_data_backups: {}
+  bc_gateway_rabbit_mq_data: {}
+
+networks:
+  default:
+    name: streaming
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"

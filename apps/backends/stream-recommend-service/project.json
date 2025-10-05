@@ -1,0 +1,38 @@
+{
+  "name": "stream-recommend-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backends/stream-recommend-service",
+  "projectType": "application",
+  "tags": ["type:backend", "scope:streaming", "language:go"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run cmd/app/main.go",
+        "cwd": "apps/backends/stream-recommend-service"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o dist/recommend-service ./cmd/app",
+        "cwd": "apps/backends/stream-recommend-service"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test ./...",
+        "cwd": "apps/backends/stream-recommend-service"
+      }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t tyrian/stream-recommend-service .",
+        "cwd": "apps/backends/stream-recommend-service"
+      }
+    }
+  }
+}
+

@@ -1,0 +1,23 @@
+<html>
+
+  <head>
+    <title>Media service</title>
+  </head>
+
+  <body>
+    <h3> ICE Connection States </h3>
+    <a href="./debug.html">debug</a>
+    <div id="iceConnectionStates"></div> <br />
+  </body>
+
+  <script>
+    let peerConnection = new RTCPeerConnection()
+
+    peerConnection.oniceconnectionstatechange = () => {
+      let el = document.createElement('p')
+      el.appendChild(document.createTextNode(peerConnection.iceConnectionState))
+
+      document.getElementById('iceConnectionStates').appendChild(el);
+    }
+  </script>
+</html>

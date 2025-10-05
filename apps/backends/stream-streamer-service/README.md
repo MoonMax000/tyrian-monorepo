@@ -1,0 +1,61 @@
+# Генерация ключей и АПИ стримера
+
+Логика старта стрима и генерация ключей.  
+
+Environment settings:
+
+```bash
+# @see https://pkg.go.dev/github.com/rs/zerolog#Level
+LOG_LEVEL=1
+
+# Http port for fiber (by default 8080)
+HTTP_PORT=8006
+
+# PostgresQL settings
+POSTGRES_HOST=localhost
+POSTGRES_PORT=6555
+POSTGRES_DB=aml-streamer
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_MAX_IDLE_CONNS=
+POSTGRES_MAX_OPEN_CONNS=
+POSTGRES_CONN_MAX_LIFETIME=
+
+# Session validation service
+# Url format: redis[s]://[[username][:password]@][host][:port][/db-number]
+SESSION_ID_REDIS_URL=redis://redis:6379/0
+# User information cache (key is email)
+# Url format: redis[s]://[[username][:password]@][host][:port][/db-number]
+USER_INFO_REDIS_URL=redis://redis:6379/0
+
+RMQ_CONN_URL=amqp://guest:guest@rabbitmq:5672/
+
+GLOBAL_RMQ_CONN_URL=amqp://rabbitmq:rabbitmq@interservice-message-broker:5673/
+
+RMQ_LIVE_STREAM_EXCHANGE=live-stream
+RMQ_LIVE_STREAM_ROUTING_KEY=live-stream.*
+RMQ_LIVE_STREAM_EXCHANGE_AUTOCREATE_ENABLED=Y
+
+RMQ_MAIL_EXCHANGE=mail
+RMQ_MAIL_ROUTING_KEY=mail.*
+RMQ_MAIL_EXCHANGE_AUTOCREATE_ENABLED=Y
+
+RMQ_STREAM_REQUEST_ROUTING_KEY=streaming_outgoing
+
+# Public url for web-rtc clients
+WEB_RTC_PUBLIC_URL=http://localhost:8005/video
+
+# For private modules
+GITHUB_TOKEN=<github token>
+
+# Secret key like in django
+SECRET_KEY=super_secret_key_very_long
+```
+
+For kuber deployment see stream-infra project
+
+Warning: for generation of OpenAPI 3.0 documentation please install swaggo/swag with this command:
+
+```bash
+go install github.com/swaggo/swag/v2/cmd/swag@latest
+```

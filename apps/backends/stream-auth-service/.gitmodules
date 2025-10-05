@@ -1,0 +1,3 @@
+[submodule "admin"]
+	path = admin
+	url = https://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@github.com/Capstane/stream-frontend-admin-service.git

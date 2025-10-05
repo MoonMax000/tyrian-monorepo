@@ -1,0 +1,437 @@
+basePath: /api/v1
+definitions:
+  types.BecomeStreamerRequest:
+    properties:
+      additional_text:
+        type: string
+      email:
+        type: string
+    type: object
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FailureResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.LiveStreamRequest:
+    properties:
+      translation_category:
+        type: string
+      translation_name:
+        type: string
+      translation_notify_message:
+        type: string
+      translation_tags:
+        items:
+          type: string
+        type: array
+    type: object
+  types.StreamKeyResponse:
+    properties:
+      key:
+        type: string
+    type: object
+  types.StreamPlanSettingsResponse:
+    properties:
+      description:
+        type: string
+      end_time:
+        type: string
+      game:
+        type: string
+      start_time:
+        type: string
+    type: object
+  types.StreamPlanSettingsUpdateRequest:
+    properties:
+      description:
+        type: string
+      end_time:
+        type: string
+      game:
+        type: string
+      start_time:
+        type: string
+    type: object
+  types.StreamSettingsResponse:
+    properties:
+      audio_codec:
+        type: string
+      audio_quality:
+        type: string
+      bitrate:
+        type: integer
+      frame_rate:
+        type: integer
+      resolution:
+        type: string
+      video_codec:
+        type: string
+    type: object
+  types.StreamSettingsUpdateRequest:
+    properties:
+      audio_codec:
+        type: string
+      audio_quality:
+        type: string
+      bitrate:
+        type: integer
+      frame_rate:
+        type: integer
+      resolution:
+        type: string
+      video_codec:
+        type: string
+    type: object
+  types.StreamerRequestStatusResponse:
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an streaming API
+  title: Streaming API
+  version: "1.0"
+paths:
+  /profile/me/become-streamer-request:
+    post:
+      consumes:
+      - application/json
+      description: Submit a request to become a streamer. If a request with status
+        'created' already exists, returns an error.
+      parameters:
+      - description: become streamer request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.BecomeStreamerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Validation error or request already exists
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Profile request streamer role
+      tags:
+      - profile
+  /profile/me/status-streamer-request:
+    get:
+      description: Returns the current status of the user's streamer role request
+        (e.g. created, rejected, approved)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamerRequestStatusResponse'
+        "404":
+          description: Request not found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get streamer role request status
+      tags:
+      - profile
+  /stream-keys/new:
+    get:
+      description: Stream key generation
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamKeyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Stream key generation
+      tags:
+      - stream-keys
+  /stream-keys/reset:
+    delete:
+      description: Reset stream key
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Reset stream key
+      tags:
+      - stream-keys
+  /stream/plan:
+    get:
+      consumes:
+      - application/json
+      description: Stream plan settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamPlanSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Stream plan settings
+      tags:
+      - stream
+    patch:
+      consumes:
+      - application/json
+      description: Stream plan settings change
+      parameters:
+      - description: stream plan settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.StreamPlanSettingsUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamPlanSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Stream plan settings change
+      tags:
+      - stream
+    put:
+      consumes:
+      - application/json
+      description: Stream plan settings change
+      parameters:
+      - description: stream plan settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.StreamPlanSettingsUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamPlanSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Stream plan settings change
+      tags:
+      - stream
+  /stream/settings:
+    get:
+      consumes:
+      - application/json
+      description: Stream settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Stream settings
+      tags:
+      - stream
+    patch:
+      consumes:
+      - application/json
+      description: Stream settings change
+      parameters:
+      - description: stream settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.StreamSettingsUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Stream settings change
+      tags:
+      - stream
+    put:
+      consumes:
+      - application/json
+      description: Stream settings change
+      parameters:
+      - description: stream settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.StreamSettingsUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StreamSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Stream settings change
+      tags:
+      - stream
+  /stream/start:
+    put:
+      consumes:
+      - application/json
+      description: Start live stream
+      parameters:
+      - description: live stream settings
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.LiveStreamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Start live stream
+      tags:
+      - stream
+  /stream/stop:
+    delete:
+      description: Stop live stream
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Stop live stream
+      tags:
+      - stream
+securityDefinitions:
+  CookieAuth:
+    description: Сессионная аутентификация через куку sessionid
+    in: cookie
+    name: sessionid
+    type: apiKey
+swagger: "2.0"

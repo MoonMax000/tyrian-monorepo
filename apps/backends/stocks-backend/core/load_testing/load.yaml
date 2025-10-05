@@ -1,0 +1,12 @@
+phantom:
+  ammo_type: phantom
+  address: 127.0.0.1:9999 # [Target's address]:[target's port]
+  uris:
+    - /api/auth/users/
+  load_profile:
+    load_type: rps # schedule load by defining requests per second
+    schedule: const(100, 1m) 
+console:
+  enabled: true # enable console output
+telegraf:
+  enabled: false # let's disable telegraf monitoring for the first time

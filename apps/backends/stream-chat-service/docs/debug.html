@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Streaming chat service debug</title>
+    <script>
+      let chat
+      append = function (text) {
+        document
+          .getElementById("websocketEvents")
+          .insertAdjacentHTML("beforeend", "<li>" + text + "</li>")
+      }
+      window.onload = function () {
+        document.getElementById("msgType").click()
+      }
+
+      function reconnect(event) {
+        const chatId = document.getElementById("chatId").value
+        const sessionID = document.getElementById("sessionID").value || null;
+        
+        // Below commented code doesn't work in modern browsers (security reasons)
+        // @see https://stackoverflow.com/questions/4361173/http-headers-in-websockets-client-api
+        //chat = new WebSocket(`ws://${window.location.host}/ws`, null, {
+        //  headers: {
+        //    ['Chat-ID']: chatId,
+        //    ['Authorization']: authorizationHeader
+        //  },
+        //})
+
+        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+        chat = new WebSocket(`${protocol}://${window.location.host}/ws`, ["chat", chatId, sessionID]);
+        // chat = new WebSocket(`wss://${window.location.host}/ws`)
+
+        chat.onmessage = function (event) {
+          append(event.data)
+        }
+        chat.onopen = function () {
+          append("🚀 Connected to WebSocket!")
+        }
+        chat.onclose = function () {
+          append("Connection closed")
+        }
+        chat.onerror = function () {
+          append("Error happens")
+        }
+      }
+
+      function showBodyTemplate(event) {
+        const messageBody = document.getElementById("messageBody")
+
+        switch (event.srcElement.value) {
+          case "MSG":
+            messageBody.value = `{"data": "Hello!", "extradata": "", "duration": 100}` // EventDataIn struct
+            break
+          // case "MUTE":
+          //   messageBody.value = `{"data": "It's a mute!", "extradata": "", "duration": 100}` // EventDataIn struct
+          //   break
+          // case "UNMUTE":
+          //   messageBody.value = `{"data": "It's an unmute!", "extradata": "", "duration": 100}` // EventDataIn struct
+          //   break
+          case "BAN":
+            messageBody.value = `{"nick": "Bobi", "banip": bool, "duration": 100, "ispermanent": bool, "reason": "Spammer"}` // BanIn struct
+            break
+          case "UNBAN":
+            messageBody.value = `{"data": "Bobi", "extradata": "", "duration": 100}` // EventDataIn struct
+            break
+          // case "SUBONLY":
+          //   messageBody.value = `{"data": "", "extradata": "", "duration": 100}` // EventDataIn struct
+          //   break
+          case "PING":
+            messageBody.value = `Ping! (any data)` // []byte
+            break
+          case "PONG":
+            messageBody.value = `` // Do nothing (server event)
+            break
+          // case "BROADCAST":
+          //   messageBody.value = `{"data": "It's broadcast", "extradata": "", "duration": 100}` // EventDataIn struct
+          //   break
+          // case "PRIVMSG":
+          //   messageBody.value = `{"nick": "", "data": ""}` // PrivmsgIn struct
+          //   break
+          case "ROLE":
+            messageBody.value = `{"nick": "Bobi", "role": "moderator"}` // Role struct
+            break
+          case "DELETEMSG":
+            messageBody.value = `{"id_mgs": "df35376c-2a35-4f42-80bb-47265766901f", "delete_mgs": "{\"type\":\"MSG\", \"data\":{\"nick\":\"UserStream\",\"features\":[\"admin\"],\"id\":\"df35376c-2a35-4f42-80bb-47265766901f\",\"timestamp\":1757674722984,\"data\":\"Hello333!\"}}"}` // DeleteMsg struct
+            break
+          case "BANLIST":
+            messageBody.value = `request`
+            break
+          case "MODERATORLIST":
+            messageBody.value = `request`
+            break
+          case "UNROLE":
+            messageBody.value = `{"nick": "Bobi", "role": "moderator"}` // Role struct
+            break
+        }
+      }
+
+      function sendMessage(event) {
+        let selectedMessageType = "MSG" // By default
+        const messageTypes = document.getElementsByName("messageType")
+        for (i = 0; i < messageTypes.length; ++i)
+          if (messageTypes[i].checked)
+            selectedMessageType = messageTypes[i].value
+        let message = `${selectedMessageType} ${
+          document.getElementById("messageBody").value
+        }`
+        chat.send(message)
+      }
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+  </head>
+
+  <body>
+    <main class="container">
+      <div>
+        <label for="chatId">Chat-ID</label>
+        <input value="Stream1" type="text" id="chatId" />
+        <label for="sessionID">SessionID</label>
+        <input value="abc123" type="text" id="sessionID" />
+        <input type="button" value="Connect" onclick="reconnect(event)" />
+      </div>
+
+      <fieldset>
+        <legend>Message type:</legend>
+
+        <div>
+          <input
+            type="radio"
+            id="msgType"
+            name="messageType"
+            value="MSG"
+            onclick="showBodyTemplate(event)"
+            checked
+          />
+          <label for="msgType">MSG</label>
+        </div>
+
+        <!-- <div>
+          <input
+            type="radio"
+            id="muteType"
+            name="messageType"
+            value="MUTE"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="muteType">MUTE</label>
+        </div>
+
+        <div>
+          <input
+            type="radio"
+            id="unmuteType"
+            name="messageType"
+            value="UNMUTE"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="unmuteType">UNMUTE</label>
+        </div> -->
+
+        <div>
+          <input
+            type="radio"
+            id="banType"
+            name="messageType"
+            value="BAN"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="banType">BAN</label>
+        </div>
+
+        <div>
+          <input
+            type="radio"
+            id="unbanType"
+            name="messageType"
+            value="UNBAN"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="unbanType">UNBAN</label>
+        </div>
+
+        <!-- <div>
+          <input
+            type="radio"
+            id="subonlyType"
+            name="messageType"
+            value="SUBONLY"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="subonlyType">SUBONLY</label>
+        </div> -->
+
+        <div>
+          <input
+            type="radio"
+            id="pingType"
+            name="messageType"
+            value="PING"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="pingType">PING</label>
+        </div>
+
+        <div>
+          <input
+            type="radio"
+            id="pongType"
+            name="messageType"
+            value="PONG"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="pongType">PONG</label>
+        </div>
+
+        <!-- <div>
+          <input
+            type="radio"
+            id="broadcastType"
+            name="messageType"
+            value="BROADCAST"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="broadcastType">BROADCAST</label>
+        </div>
+
+        <div>
+          <input
+            type="radio"
+            id="privmsgType"
+            name="messageType"
+            value="PRIVMSG"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="privmsgType">PRIVMSG</label>
+        </div> -->
+
+        <div>
+          <input
+            type="radio"
+            id="roleType"
+            name="messageType"
+            value="ROLE"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="roleType">ROLE</label>
+        </div>
+
+        <div>
+          <input
+            type="radio"
+            id="deleteMsgType"
+            name="messageType"
+            value="DELETEMSG"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="deleteMsgType">DELETEMSG</label>
+        </div>
+
+        <div>
+          <input
+            type="radio"
+            id="banlistMsgType"
+            name="messageType"
+            value="BANLIST"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="banlistMsgType">BANLIST</label>
+        </div>
+
+        <div>
+          <input
+            type="radio"
+            id="moderatorlistMsgType"
+            name="messageType"
+            value="MODERATORLIST"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="moderatorlistMsgType">MODERATORLIST</label>
+        </div>
+
+        <div>
+          <input
+            type="radio"
+            id="unroleMsgType"
+            name="messageType"
+            value="UNROLE"
+            onclick="showBodyTemplate(event)"
+          />
+          <label for="unroleMsgType">UNROLE</label>
+        </div>
+
+      </fieldset>
+
+      Message body: <input value="Hello!" type="text" id="messageBody" />
+      <input type="button" value="Submit" onclick="sendMessage(event)" /><br />
+      <ul id="websocketEvents"></ul>
+    </main>
+  </body>
+</html>

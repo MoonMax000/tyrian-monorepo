@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.service.http.port }}
+      targetPort: {{ .Values.service.http.targetPort }}
+      protocol: TCP
+      {{- if .Values.service.http.nodePort }}
+      nodePort: {{ .Values.service.http.nodePort }}
+      {{- end }}
+    - name: udp
+      port: {{ .Values.service.udp.port }}
+      targetPort: {{ .Values.service.udp.targetPort }}
+      protocol: UDP
+      {{- if .Values.service.udp.nodePort }}
+      nodePort: {{ .Values.service.udp.nodePort }}
+      {{- end }}
+  selector:
+    app: {{ .Chart.Name }}

@@ -1,0 +1,100 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set short SHA
+      id: vars
+      run: echo "COMMIT_SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Configure Docker daemon for insecure registry
+      run: |
+        echo '{"insecure-registries":["10.166.44.63"]}' | sudo tee /etc/docker/daemon.json
+        sudo systemctl restart docker
+
+    - name: Install WireGuard
+      run: sudo apt-get update && sudo apt-get install -y wireguard resolvconf
+
+    - name: Configure WireGuard
+      run: |
+        echo "${{ vars.WIREGUARD_CONF }}" > wg0.conf
+        sudo mv wg0.conf /etc/wireguard/wg0.conf
+        sudo wg-quick up wg0
+
+    - name: Log in to Harbor Registry
+      run: echo "${{ vars.HARBOR_PASSWORD }}" | docker login ${{ vars.HARBOR_URL }} -u ${{ vars.HARBOR_USERNAME }} --password-stdin
+
+    - name: Build and push Docker image Backend
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: ${{ vars.HARBOR_URL }}/stream/media-service:${{ env.COMMIT_SHORT_SHA }}
+
+    - name: Deploy to Server
+      env:
+        SSH_PRIVATE_KEY: ${{ vars.SSH_PRIVATE_KEY }}
+        JUMPHOST_PRIVATE_KEY: ${{ vars.JUMPHOST_SSH_PRIVATE_KEY }}  # если ключ другой (опционально)
+        JUMPHOST_USER: ${{ vars.JUMPHOST_USER }}                     # например: ubuntu
+        JUMPHOST_HOST: ${{ vars.JUMPHOST_HOST }}                     # например: 203.0.113.45
+        SERVER_USER: mediaservice
+        SERVER_HOST: ${{ vars.SERVER_IP }}
+        DOCKER_COMPOSE_PATH: /home/mediaservice/mediaservice/docker-compose.yaml
+        NEW_IMAGE_TAG: ${{ vars.HARBOR_URL_OUT }}/stream/media-service:${{ env.COMMIT_SHORT_SHA }}
+      run: |
+        # Создаём временный каталог для SSH-конфига и ключей
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+
+        # Настройка SSH-агента
+        eval "$(ssh-agent -s)"
+
+        # Добавляем ключ jumphost (если используется отдельный)
+        echo "$JUMPHOST_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+
+        # Добавляем основной ключ (для целевого сервера)
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+
+        # Настройка SSH config для ProxyJump
+        cat <<EOT > ~/.ssh/config
+        Host $JUMPHOST_HOST
+            User $JUMPHOST_USER
+            StrictHostKeyChecking no
+            IdentitiesOnly yes
+            IdentityFile ~/.ssh/jumphost_key
+
+        Host $SERVER_HOST
+            User $SERVER_USER
+            StrictHostKeyChecking no
+            IdentitiesOnly yes
+            IdentityFile ~/.ssh/server_key
+            ProxyJump $JUMPHOST_USER@$JUMPHOST_HOST
+        EOT
+
+        # Сохраняем ключи в файлы
+        echo "$JUMPHOST_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/jumphost_key
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/server_key
+
+        chmod 600 ~/.ssh/jumphost_key ~/.ssh/server_key
+
+        # Проверка подключения (опционально, для отладки)
+        # ssh -v $SERVER_HOST exit
+
+        # Обновляем образ в docker-compose.yaml на сервере
+        ssh $SERVER_HOST "sed -i 's|image: .*$|image: $NEW_IMAGE_TAG|' $DOCKER_COMPOSE_PATH"
+
+        # Перезапускаем сервис
+        ssh $SERVER_HOST "docker compose -f $DOCKER_COMPOSE_PATH up -d"

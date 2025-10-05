@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  chat-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
+    env_file:
+      - .env
+    ports:
+      - "1118:1118"  # WS-сервер
+      - "1119:1119"  # HTTP API-сервер
+      
+
+  chat-yugabyte:
+    image: yugabytedb/yugabyte:2024.2.2.4-b1
+    container_name: yugabyte
+    ports:
+      - "7000:7000"   # Master UI
+      - "9000:9000"   # Tablet UI
+      - "15433:15433" # YSQL JDBC
+      - "${POSTGRES_PORT:-5433}:${POSTGRES_PORT:-5433}"   # YSQL main port
+      - "9042:9042"   # YCQL
+    environment:
+      - "PGPORT=${POSTGRES_PORT:-5433}"
+    env_file:
+      - .env
+    volumes:
+      - .data/yugabyte:/home/yugabyte/yb_data
+      - ./yugabyte_with_logs.sh:/home/yugabyte/yugabyte_with_logs.sh
+    command: ["./yugabyte_with_logs.sh"]
+      
+
+volumes:
+  yugabyte_2025_01_data: {}
+
+networks:
+  default:
+    name: streaming
+    # Network defined in docker-compose.local.yml for project streaming-auth-service
+    external: true

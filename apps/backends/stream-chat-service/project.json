@@ -1,0 +1,38 @@
+{
+  "name": "stream-chat-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backends/stream-chat-service",
+  "projectType": "application",
+  "tags": ["type:backend", "scope:streaming", "language:go"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run cmd/app/main.go",
+        "cwd": "apps/backends/stream-chat-service"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o dist/chat-service ./cmd/app",
+        "cwd": "apps/backends/stream-chat-service"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test ./...",
+        "cwd": "apps/backends/stream-chat-service"
+      }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t tyrian/stream-chat-service .",
+        "cwd": "apps/backends/stream-chat-service"
+      }
+    }
+  }
+}
+

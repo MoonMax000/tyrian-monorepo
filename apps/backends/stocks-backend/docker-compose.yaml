@@ -1,0 +1,157 @@
+# td - Trader diary
+services:
+
+  stocks-db:
+    container_name: td-db
+    restart: always
+    image: postgres:16.0-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: td_db
+      PGDATA: /var/lib/postgresql/data
+      PG_SHARED_PRELOAD_LIBRARIES: pg_stat_statements
+      PGPORT: ${DB_PORT:-5435}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - ${DB_PORT:-5435}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - ./core/project/.env
+
+  stocks-redis:
+    container_name: td-redis
+    restart: always
+    image: redis:alpine
+    expose:
+      - ${REDIS_PORT:-6375}
+    volumes:
+      - redis-data:/data
+    command: --port ${REDIS_PORT:-6375}
+    env_file:
+      - ./core/project/.env
+
+  stocks-core:
+    container_name: td-backend
+    restart: always
+    build: ./core
+    command: sh -c "python3 manage.py migrate &&
+             python3 manage.py collectstatic --noinput &&
+             (python3 manage.py createsuperuser --email admin@admin.ru --noinput || echo 'Суперпользователь уже существует') &&
+             python3 -m gunicorn --bind 0.0.0.0:${HTTP_PORT:-8050} project.asgi:application -k uvicorn.workers.UvicornWorker"
+    env_file:
+      - ./core/project/.env
+    ports:
+      - "${HTTP_PORT:-8050}:${HTTP_PORT:-8050}"
+    depends_on:
+      stocks-db:
+        condition: service_healthy
+
+  stocks-formatter:
+    container_name: td-formatter
+    restart: always
+    build: ./formatter
+    command: uvicorn main:app --host 0.0.0.0 --port ${FORMATTER_PORT:-8051}
+    volumes:
+      - ./formatter:/usr/src/app/
+    expose:
+      - ${FORMATTER_PORT:-8051}
+    environment:
+      - REDIS_HOST=stocks-redis
+      - REDIS_PORT=${REDIS_PORT:-6375}
+      - TERRAPIN_API_URL=http://stocks-terrapin:8054
+    depends_on:
+      - stocks-core
+
+  stocks-cbonds:
+     container_name: td-cbonds
+     restart: always
+     build: ./web-clients/cbonds
+     command: uvicorn app.main:app --host 0.0.0.0 --port 8054
+     volumes:
+         - ./web-clients/cbonds:/usr/src/app/
+     env_file:
+         - ./web-clients/cbonds/.env
+     depends_on:
+         - stocks-formatter
+
+  stocks-fmp:
+    container_name: td-fmp
+    restart: always
+    build: ./web-clients/fmp
+    volumes:
+      - ./web-clients/fmp:/usr/src/app/
+    expose:
+      - 8052
+    env_file:
+      - ./web-clients/fmp/.env
+    depends_on:
+      - stocks-formatter
+
+
+  stocks-terrapin:
+    container_name: td-terrapin
+    restart: always
+    build: ./web-clients/terrapin
+    volumes:
+      - ./web-clients/terrapin:/usr/src/app/
+    expose:
+      - 8054
+    env_file:
+      - ./web-clients/terrapin/.env
+    depends_on:
+      - stocks-formatter
+
+  stocks-cmc:
+    container_name: stocks-cmc
+    build: ./web-clients/cmc
+    image: stocks-cmc
+    privileged: true
+    expose:
+      - 8053
+    volumes:
+      - ./web-clients/cmc/:/coin-market-cap
+    depends_on:
+      - stocks-formatter
+
+  stocks-celery:
+    container_name: td-celery-beat
+    restart: always
+    build: ./core
+    command: celery -A project worker --beat --scheduler django --loglevel=info
+    env_file:
+      - ./core/project/.env
+    depends_on:
+      - stocks-db
+      - stocks-redis
+      - stocks-core
+
+  stocks-flower:
+    container_name: td-flower
+    restart: always
+    build:
+      context: ./core
+    command: celery -A project flower
+    env_file:
+      - ./core/project/.env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - stocks-db
+      - stocks-redis
+      - stocks-core
+      - stocks-celery
+
+volumes:
+  postgres_data:
+  redis-data:
+
+networks:
+  default:
+    name: axanetwork
+    external: True

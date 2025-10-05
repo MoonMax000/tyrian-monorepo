@@ -1,0 +1,386 @@
+basePath: /api/v1
+definitions:
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FailureResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.NotifyOnLiveBroadcast:
+    properties:
+      email:
+        type: string
+      ref:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.NotifyOnMention:
+    properties:
+      email:
+        type: string
+      ref:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.NotifyOnNewSubscriber:
+    properties:
+      email:
+        type: string
+      ref:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.NotifyOnNews:
+    properties:
+      email:
+        type: string
+      ref:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.NotifyOnRecommendations:
+    properties:
+      email:
+        type: string
+      ref:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.NotifyOnVOD:
+    properties:
+      email:
+        type: string
+      ref:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.NotifyResponse:
+    properties:
+      email_notifications:
+        type: boolean
+      notify_on_live_broadcast:
+        type: boolean
+      notify_on_mention:
+        type: boolean
+      notify_on_new_subscriber:
+        type: boolean
+      notify_on_news:
+        type: boolean
+      notify_on_recommendations:
+        type: boolean
+      notify_on_vod:
+        type: boolean
+    type: object
+  types.NotifyUpdateRequest:
+    properties:
+      email_notifications:
+        type: boolean
+      notify_on_live_broadcast:
+        type: boolean
+      notify_on_mention:
+        type: boolean
+      notify_on_new_subscriber:
+        type: boolean
+      notify_on_news:
+        type: boolean
+      notify_on_recommendations:
+        type: boolean
+      notify_on_vod:
+        type: boolean
+    type: object
+info:
+  contact: {}
+  description: This is an API of notify-service for Streaming application
+  title: Streaming notify-service Swagger
+  version: "1.0"
+paths:
+  /notify/notify-on-live-broadcast:
+    put:
+      consumes:
+      - application/json
+      description: Test notify NotifyOnLiveBroadcast
+      parameters:
+      - description: profile notify settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.NotifyOnLiveBroadcast'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.NotifyOnLiveBroadcast'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Test notify NotifyOnLiveBroadcast
+      tags:
+      - notify
+  /notify/notify-on-mention:
+    put:
+      consumes:
+      - application/json
+      description: Test notify NotifyOnMention
+      parameters:
+      - description: profile notify settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.NotifyOnMention'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.NotifyOnMention'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Test notify NotifyOnMention
+      tags:
+      - notify
+  /notify/notify-on-new-subscriber:
+    put:
+      consumes:
+      - application/json
+      description: Test notify NotifyOnNewSubscriber
+      parameters:
+      - description: profile notify settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.NotifyOnNewSubscriber'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.NotifyOnNewSubscriber'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Test notify NotifyOnNewSubscriber
+      tags:
+      - notify
+  /notify/notify-on-news:
+    put:
+      consumes:
+      - application/json
+      description: Test notify NotifyOnNews
+      parameters:
+      - description: profile notify settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.NotifyOnNews'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.NotifyOnNews'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Test notify NotifyOnNews
+      tags:
+      - notify
+  /notify/notify-on-recommendations:
+    put:
+      consumes:
+      - application/json
+      description: Test notify NotifyOnRecommendations
+      parameters:
+      - description: profile notify settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.NotifyOnRecommendations'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.NotifyOnRecommendations'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Test notify NotifyOnRecommendations
+      tags:
+      - notify
+  /notify/notify-on-vod:
+    put:
+      consumes:
+      - application/json
+      description: Test notify NotifyOnVOD
+      parameters:
+      - description: profile notify settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.NotifyOnVOD'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.NotifyOnVOD'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Test notify NotifyOnVOD
+      tags:
+      - notify
+  /profile/me/notify-settings:
+    get:
+      consumes:
+      - application/json
+      description: Profile notify settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.NotifyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Profile notify settings
+      tags:
+      - profile
+    patch:
+      consumes:
+      - application/json
+      description: Profile notify settings change
+      parameters:
+      - description: profile notify settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.NotifyUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.NotifyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Profile notify settings change
+      tags:
+      - profile
+    put:
+      consumes:
+      - application/json
+      description: Profile notify settings change
+      parameters:
+      - description: profile notify settings change
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.NotifyUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.NotifyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Profile notify settings change
+      tags:
+      - profile
+securityDefinitions:
+  ApiKeyAuth:
+    description: Description for what is this security definition being used
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

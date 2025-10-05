@@ -1,0 +1,84 @@
+basePath: /api/v1
+definitions:
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FailureResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.MessageChat:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+      sender:
+        type: string
+      timestamp_message:
+        type: string
+    type: object
+  types.SuccessResponseHistory:
+    properties:
+      message:
+        items:
+          $ref: '#/definitions/types.MessageChat'
+        type: array
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an streaming API
+  title: Streaming API
+  version: "1.0"
+paths:
+  /history/chat:
+    get:
+      description: CheckUser
+      parameters:
+      - description: Chat history
+        in: query
+        name: chatID
+        required: true
+        type: string
+      - description: Limit the number of messages to fetch
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.SuccessResponseHistory'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: CheckUser
+      tags:
+      - history
+securityDefinitions:
+  CookieAuth:
+    description: Сессионная аутентификация через куку sessionid
+    in: cookie
+    name: sessionid
+    type: apiKey
+swagger: "2.0"

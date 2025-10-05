@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+
+  coin-market-cap:
+    container_name: coin-market-cap
+    build: .
+    image: coin-market-cap
+    privileged: true
+    ports:
+      - "8084:8053"
+    volumes:
+      - ./:/coin-market-cap
+
+  redis:
+    image: redis:latest
+    container_name: crypto-redis
+    restart: on-failure
+    ports:
+      - 6379:6379
+    logging:
+      options:
+        max-size: 10m
