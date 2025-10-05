@@ -1,0 +1,222 @@
+basePath: /api/v1
+definitions:
+  types.Block:
+    properties:
+      content:
+        type: string
+      files:
+        items:
+          $ref: '#/definitions/types.File'
+        type: array
+      id:
+        type: string
+      media_url:
+        type: string
+      next_block_id:
+        type: string
+      post_id:
+        type: string
+    type: object
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.File:
+    properties:
+      ext:
+        type: string
+      file_size:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      url:
+        type: string
+      user_name:
+        type: string
+    type: object
+  types.PaginationResponse:
+    properties:
+      current_page:
+        type: integer
+      page_size:
+        type: integer
+      total_pages:
+        type: integer
+      total_records:
+        type: integer
+    type: object
+  types.Post:
+    properties:
+      author_avatar:
+        type: string
+      blocks:
+        items:
+          $ref: '#/definitions/types.Block'
+        type: array
+      content:
+        type: string
+      created:
+        type: string
+      favorite:
+        type: string
+      first_block_id:
+        type: string
+      id:
+        type: string
+      like_count:
+        type: integer
+      liked:
+        type: string
+      media_url:
+        type: string
+      need_payment:
+        type: boolean
+      payment:
+        type: number
+      tags:
+        items:
+          $ref: '#/definitions/types.Tag'
+        type: array
+      title:
+        type: string
+      type:
+        enum:
+        - ideas
+        - video
+        - script
+        type: string
+      user_id:
+        type: string
+      user_name:
+        type: string
+    type: object
+  types.PostsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Post'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationResponse'
+      status:
+        type: string
+    type: object
+  types.Tag:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an API for Socialweb application
+  title: AXA-socialweb-service Swagger
+  version: "1.0"
+paths:
+  /favorite/:
+    get:
+      consumes:
+      - application/json
+      description: favorite posts
+      parameters:
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 1000)'
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Sort type: latest or recommended (default: latest)'
+        in: query
+        name: sort_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PostsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: favorite posts
+      tags:
+      - favorite
+  /favorite/{postId}:
+    delete:
+      consumes:
+      - application/json
+      description: Unmark post as favorite
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Post'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Unmark post as favorite
+      tags:
+      - favorite
+    put:
+      consumes:
+      - application/json
+      description: Mark post as favorite
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Post'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Mark post as favorite
+      tags:
+      - favorite
+schemes:
+- http
+- https
+securityDefinitions:
+  ApiKeyAuth:
+    description: Description for what is this security definition being used
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

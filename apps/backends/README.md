@@ -2,9 +2,9 @@
 
 This directory contains all backend microservices for the Tyrian Trade platform.
 
-## Services
+## Services (8 Total)
 
-### Auth Services
+### Auth Services (2)
 
 #### 1. **auth-service** (Django/Python)
 Main authentication service handling OAuth2, JWT, user management.
@@ -161,15 +161,76 @@ npx nx docker-build auth-sync-service
 
 ---
 
+### Social Network Services (6)
+
+#### 1. **socialweb-posts-service** (Go)
+Posts and content management service.
+
+**Tech Stack:** Go + PostgreSQL + Elasticsearch + RabbitMQ + S3
+
+**Commands:**
+```bash
+npx nx serve socialweb-posts-service
+npx nx build socialweb-posts-service
+npx nx test socialweb-posts-service
+```
+
+#### 2. **socialweb-profiles-service** (Go)
+User profiles and profile data management.
+
+**Tech Stack:** Go + PostgreSQL + RabbitMQ
+
+**Commands:**
+```bash
+npx nx serve socialweb-profiles-service
+```
+
+#### 3. **socialweb-likes-service** (Go)
+Likes and reactions system.
+
+**Tech Stack:** Go + PostgreSQL + RabbitMQ
+
+**Commands:**
+```bash
+npx nx serve socialweb-likes-service
+```
+
+#### 4. **socialweb-subscriptions-service** (Go)
+User subscriptions and following system.
+
+**Tech Stack:** Go + PostgreSQL + RabbitMQ
+
+**Commands:**
+```bash
+npx nx serve socialweb-subscriptions-service
+```
+
+#### 5. **socialweb-favorites-service** (Go)
+Favorites and bookmarks management.
+
+**Tech Stack:** Go + PostgreSQL + RabbitMQ
+
+**Commands:**
+```bash
+npx nx serve socialweb-favorites-service
+```
+
+#### 6. **socialweb-notifications-service** (FastAPI/Python)
+Real-time notifications service.
+
+**Tech Stack:** FastAPI + PostgreSQL + RabbitMQ + WebSocket
+
+**Commands:**
+```bash
+npx nx serve socialweb-notifications-service
+```
+
+---
+
 ## Future Services (To be migrated)
 
-### Social Network Services
-- posts-service (Django)
-- profiles-service (Django)
-- likes-service (Django)
+### Social Network Services (Remaining)
 - comments-service (Django)
-- subscriptions-service (Django)
-- notifications-service (FastAPI)
 
 ### Marketplace Services
 - marketplace-backend (Django)

@@ -1,0 +1,24 @@
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Update app service
+        uses: appleboy/ssh-action@master
+        with:
+          script: "cd /opt/AXA-socialweb/AXA-socialweb-posts && git pull origin main && docker compose up -d --build --remove-orphans --force-recreate && sleep 6 && docker compose logs -n 1000"
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          proxy_host: ${{ secrets.SSH_JUMP_HOST }}
+          proxy_username: jumpuser
+          proxy_key: ${{ secrets.SSH_KEY }}

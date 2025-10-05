@@ -1,0 +1,395 @@
+basePath: /api/v1
+definitions:
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FileUploadResponse:
+    properties:
+      url:
+        type: string
+    type: object
+  types.Post:
+    properties:
+      content:
+        type: string
+      files:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      media_url:
+        type: string
+      payment:
+        type: boolean
+      subscribers:
+        items:
+          type: string
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      type:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.Profile:
+    properties:
+      avatar_url:
+        type: string
+      cover_url:
+        type: string
+      description:
+        type: string
+      donation_url:
+        type: string
+      email:
+        type: string
+      email_confirmed:
+        type: boolean
+      id:
+        type: string
+      notification_settings:
+        $ref: '#/definitions/types.ProfileNotificationSettings'
+      permits:
+        items:
+          type: string
+        type: array
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+  types.ProfileNotificationSettings:
+    description: Настройки уведоплений для пользователя например "Включить звук уведомления",
+      "Когда кто-то подписался на вас" и т.д.
+    properties:
+      desktop_notifications:
+        description: Показывать уведомления на рабочем столе
+        type: boolean
+      enable_notifications:
+        description: Включить/Выключить нотификации
+        type: boolean
+      notification_sound:
+        description: Включить звук уведомления
+        type: boolean
+      suspicious_attempts_to_logon:
+        description: Письма о подозрительных попытках войти в вашу учётную запись
+        type: boolean
+      when_idea_update_email:
+        description: Когда есть обновление (Идеи, на которые вы подписаны) email
+        type: boolean
+      when_idea_update_ws:
+        description: Когда есть обновление (Идеи, на которые вы подписаны) web
+        type: boolean
+      when_script_update_email:
+        description: Когда есть обновление (Скрипты, которые вы добавили в Избранное
+          или оценили) email
+        type: boolean
+      when_script_update_ws:
+        description: Когда есть обновление (Скрипты, которые вы добавили в Избранное
+          или оценили) web
+        type: boolean
+      when_someone_comments_you_idea_email:
+        description: Когда кто-то комментирует вашу идею (Ваши идеи) email
+        type: boolean
+      when_someone_comments_you_idea_ws:
+        description: Когда кто-то комментирует вашу идею (Ваши идеи) web
+        type: boolean
+      when_someone_follows_you_email:
+        description: Когда кто-то подписался на вас (Ваш профиль) email
+        type: boolean
+      when_someone_follows_you_ws:
+        description: Когда кто-то подписался на вас (Ваш профиль) web
+        type: boolean
+      when_someone_likes_you_idea_email:
+        description: Когда кому-то понравилась ваша идея (Ваши идеи) email
+        type: boolean
+      when_someone_likes_you_idea_ws:
+        description: Когда кому-то понравилась ваша идея (Ваши идеи) web
+        type: boolean
+      when_someone_mentions_you_in_idea_comment_ws:
+        description: Когда кто-то упоминает вас в комментарии к мнению (Мнения) web
+        type: boolean
+      when_someone_mentions_you_in_idea_comments_ws:
+        description: Когда кто-то упоминает вас в комментариях к идее (Ваш профиль)
+          web
+        type: boolean
+      when_someone_mentions_you_in_opinion_email:
+        description: Когда кто-то упоминает вас в мнении (Мнения) email
+        type: boolean
+      when_someone_mentions_you_in_opinion_ws:
+        description: Когда кто-то упоминает вас в мнении (Мнения) web
+        type: boolean
+      when_someone_mentions_you_while_you_offline_email:
+        description: Когда вас упомянули в чате, пока вы были не в сети (Ваш профиль)
+          email
+        type: boolean
+      when_someone_mentions_you_while_you_offline_ws:
+        description: Когда вас упомянули в чате, пока вы были не в сети (Ваш профиль)
+          web
+        type: boolean
+      when_they_publish_new_idea_email:
+        description: Когда они опубликуют новую идею (Авторы, на которых вы подписаны)
+          email
+        type: boolean
+      when_they_publish_new_idea_ws:
+        description: Когда они опубликуют новую идею (Авторы, на которых вы подписаны)
+          web
+        type: boolean
+      when_they_publish_new_opinion_email:
+        description: Когда они публикуют новое мнение (Авторы, на которых вы подписаны)
+          email
+        type: boolean
+      when_they_publish_new_opinion_ws:
+        description: Когда они публикуют новое мнение (Авторы, на которых вы подписаны)
+          web
+        type: boolean
+    type: object
+  types.ProfileUpdateRequest:
+    properties:
+      description:
+        type: string
+      donation_url:
+        type: string
+      notification_settings:
+        $ref: '#/definitions/types.ProfileNotificationSettings'
+      username:
+        type: string
+    type: object
+  types.PublicProfile:
+    properties:
+      avatar_url:
+        type: string
+      bio:
+        type: object
+      followers:
+        items:
+          $ref: '#/definitions/types.UserInfo'
+        type: array
+      followings:
+        items:
+          $ref: '#/definitions/types.UserInfo'
+        type: array
+      id:
+        type: string
+      member_since:
+        type: string
+      posts:
+        items:
+          $ref: '#/definitions/types.Post'
+        type: array
+      username:
+        type: string
+    type: object
+  types.UserInfo:
+    properties:
+      avatar:
+        type: string
+      cover:
+        type: string
+      created:
+        type: string
+      description:
+        type: string
+      donation:
+        type: string
+      email:
+        type: string
+      email_confirmed:
+        type: boolean
+      id:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      updated:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an API of profiles-service
+  title: AXA-socialweb-service API (profiles)
+  version: "1.0"
+paths:
+  /profile/{username}/public:
+    get:
+      consumes:
+      - application/json
+      description: Get public profile by username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PublicProfile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Get public profile
+      tags:
+      - profile
+  /profile/chat-sync:
+    put:
+      consumes:
+      - application/json
+      description: Synchronization with chat service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Synchronization with chat service
+      tags:
+      - profile
+  /profile/me:
+    get:
+      consumes:
+      - application/json
+      description: Profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Profile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Profile
+      tags:
+      - profile
+    patch:
+      consumes:
+      - application/json
+      description: Profile update
+      parameters:
+      - description: info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ProfileUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Profile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Profile update
+      tags:
+      - profile
+    put:
+      consumes:
+      - application/json
+      description: Profile update
+      parameters:
+      - description: info for updating
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ProfileUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Profile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Profile update
+      tags:
+      - profile
+  /profile/me/set-avatar:
+    put:
+      consumes:
+      - multipart/form-data
+      description: Set profile avatar
+      parameters:
+      - description: this is a test file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.FileUploadResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Set profile avatar
+      tags:
+      - profile
+schemes:
+- http
+- https
+securityDefinitions:
+  CookieAuth:
+    description: Сессионная аутентификация через куку sessionid
+    in: cookie
+    name: sessionid
+    type: apiKey
+swagger: "2.0"

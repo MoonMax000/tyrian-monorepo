@@ -1,0 +1,31 @@
+{
+  "name": "socialweb-notifications-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backends/socialweb-notifications-service",
+  "projectType": "application",
+  "tags": ["type:backend", "scope:social-network", "language:python"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uvicorn main:app --reload --port 8010",
+        "cwd": "apps/backends/socialweb-notifications-service"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pytest",
+        "cwd": "apps/backends/socialweb-notifications-service"
+      }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t tyrian/socialweb-notifications-service .",
+        "cwd": "apps/backends/socialweb-notifications-service"
+      }
+    }
+  }
+}
+

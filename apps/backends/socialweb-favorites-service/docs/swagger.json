@@ -1,0 +1,342 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an API for Socialweb application",
+        "title": "AXA-socialweb-service Swagger",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/api/v1",
+    "paths": {
+        "/favorite/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "favorite posts",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "favorite"
+                ],
+                "summary": "favorite posts",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number (default: 1, min: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of items per page (default: 10, max: 1000)",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort type: latest or recommended (default: latest)",
+                        "name": "sort_type",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.PostsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.FailureErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/favorite/{postId}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mark post as favorite",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "favorite"
+                ],
+                "summary": "Mark post as favorite",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post ID",
+                        "name": "postId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Post"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.FailureErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Unmark post as favorite",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "favorite"
+                ],
+                "summary": "Unmark post as favorite",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post ID",
+                        "name": "postId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Post"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.FailureErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "types.Block": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.File"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "media_url": {
+                    "type": "string"
+                },
+                "next_block_id": {
+                    "type": "string"
+                },
+                "post_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.FailureErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.File": {
+            "type": "object",
+            "properties": {
+                "ext": {
+                    "type": "string"
+                },
+                "file_size": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.PaginationResponse": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                },
+                "total_records": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.Post": {
+            "type": "object",
+            "properties": {
+                "author_avatar": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Block"
+                    }
+                },
+                "content": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "favorite": {
+                    "type": "string"
+                },
+                "first_block_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "like_count": {
+                    "type": "integer"
+                },
+                "liked": {
+                    "type": "string"
+                },
+                "media_url": {
+                    "type": "string"
+                },
+                "need_payment": {
+                    "type": "boolean"
+                },
+                "payment": {
+                    "type": "number"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Tag"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "ideas",
+                        "video",
+                        "script"
+                    ]
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.PostsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Post"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/types.PaginationResponse"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.Tag": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "Description for what is this security definition being used",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "socialweb-posts-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backends/socialweb-posts-service",
+  "projectType": "application",
+  "tags": ["type:backend", "scope:social-network", "language:go"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run main.go",
+        "cwd": "apps/backends/socialweb-posts-service"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o dist/posts-service .",
+        "cwd": "apps/backends/socialweb-posts-service"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test ./...",
+        "cwd": "apps/backends/socialweb-posts-service"
+      }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t tyrian/socialweb-posts-service .",
+        "cwd": "apps/backends/socialweb-posts-service"
+      }
+    }
+  }
+}
+

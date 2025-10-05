@@ -1,0 +1,250 @@
+basePath: /api/v1
+definitions:
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.File:
+    properties:
+      ext:
+        type: string
+      file_size:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      url:
+        type: string
+      user_name:
+        type: string
+    type: object
+  types.PaginationResponse:
+    properties:
+      current_page:
+        type: integer
+      page_size:
+        type: integer
+      total_pages:
+        type: integer
+      total_records:
+        type: integer
+    type: object
+  types.Post:
+    properties:
+      author_avatar:
+        type: string
+      content:
+        type: string
+      created:
+        type: string
+      favorite:
+        type: string
+      files:
+        items:
+          $ref: '#/definitions/types.File'
+        type: array
+      id:
+        type: string
+      like_count:
+        type: integer
+      liked:
+        type: string
+      media_url:
+        type: string
+      need_payment:
+        type: boolean
+      payment:
+        type: number
+      tags:
+        items:
+          $ref: '#/definitions/types.Tag'
+        type: array
+      title:
+        type: string
+      type:
+        enum:
+        - ideas
+        - video
+        - script
+        type: string
+      user_id:
+        type: string
+      user_name:
+        type: string
+    type: object
+  types.PostsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Post'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationResponse'
+      status:
+        type: string
+    type: object
+  types.Tag:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an API for Socialweb application
+  title: AXA-socialweb-service Swagger
+  version: "1.0"
+paths:
+  /like/:
+    get:
+      consumes:
+      - application/json
+      description: Liking posts
+      parameters:
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 1000)'
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Sort type: latest or recommended (default: latest)'
+        in: query
+        name: sort_type
+        type: string
+      - description: 'Post type: ideas, video or script (default: all)'
+        in: query
+        name: post_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PostsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Liking posts
+      tags:
+      - like
+  /like/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Liking posts
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 1000)'
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Sort type: latest or recommended (default: latest)'
+        in: query
+        name: sort_type
+        type: string
+      - description: 'Post type: ideas, video or script (default: all)'
+        in: query
+        name: post_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PostsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: List of liking posts
+      tags:
+      - like
+  /like/{postId}:
+    delete:
+      consumes:
+      - application/json
+      description: Unmark post as like
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Post'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Unmark post as like
+      tags:
+      - like
+    put:
+      consumes:
+      - application/json
+      description: Mark post as like
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Post'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Mark post as like
+      tags:
+      - like
+schemes:
+- http
+- https
+securityDefinitions:
+  CookieAuth:
+    description: Сессионная аутентификация через куку sessionid
+    in: cookie
+    name: sessionid
+    type: apiKey
+swagger: "2.0"

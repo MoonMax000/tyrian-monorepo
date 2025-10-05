@@ -1,0 +1,38 @@
+{
+  "name": "socialweb-subscriptions-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backends/socialweb-subscriptions-service",
+  "projectType": "application",
+  "tags": ["type:backend", "scope:social-network", "language:go"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run main.go",
+        "cwd": "apps/backends/socialweb-subscriptions-service"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o dist/service .",
+        "cwd": "apps/backends/socialweb-subscriptions-service"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test ./...",
+        "cwd": "apps/backends/socialweb-subscriptions-service"
+      }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t tyrian/socialweb-subscriptions-service .",
+        "cwd": "apps/backends/socialweb-subscriptions-service"
+      }
+    }
+  }
+}
+

@@ -1,0 +1,21 @@
+services:
+  socweb-favorites:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
+    env_file:
+      - .env
+    ports:
+      - "${HTTP_PORT:-8006}:${HTTP_PORT:-8006}"
+    labels:
+      - "a=axasocweb"
+      - "traefik.enable=true"
+      - "traefik.http.routers.favorites.rule=PathPrefix(`/api/v1/favorite`)"
+      - "traefik.http.routers.favorites.entrypoints=web"
+
+networks:
+  default:
+    name: axanetwork
+    external: true

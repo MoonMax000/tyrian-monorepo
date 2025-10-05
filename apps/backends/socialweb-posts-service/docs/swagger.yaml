@@ -1,0 +1,841 @@
+basePath: /api/v1
+definitions:
+  types.BlockCreate:
+    properties:
+      content:
+        type: string
+      created:
+        type: string
+      files:
+        items:
+          $ref: '#/definitions/types.FileCreate'
+        type: array
+      id:
+        type: string
+      media_url:
+        type: string
+      next_block:
+        type: string
+      post_id:
+        type: string
+      prev_block:
+        type: string
+    type: object
+  types.DeleteFilesRequest:
+    properties:
+      file_ids:
+        items:
+          type: string
+        type: array
+    type: object
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FailureResponse:
+    properties:
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.File:
+    properties:
+      ext:
+        type: string
+      file_size:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      url:
+        type: string
+      user_name:
+        type: string
+    type: object
+  types.FileCreate:
+    properties:
+      ext:
+        type: string
+      file_size:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      url:
+        type: string
+      user_name:
+        type: string
+    type: object
+  types.PaginationResponse:
+    properties:
+      current_page:
+        type: integer
+      page_size:
+        type: integer
+      total_pages:
+        type: integer
+      total_records:
+        type: integer
+    type: object
+  types.Post:
+    properties:
+      author_avatar:
+        type: string
+      content:
+        type: string
+      created:
+        type: string
+      favorite:
+        type: string
+      files:
+        items:
+          $ref: '#/definitions/types.File'
+        type: array
+      id:
+        type: string
+      like_count:
+        type: integer
+      liked:
+        type: string
+      media_url:
+        type: string
+      need_payment:
+        type: boolean
+      payment:
+        type: number
+      tags:
+        items:
+          $ref: '#/definitions/types.Tag'
+        type: array
+      title:
+        type: string
+      type:
+        enum:
+        - ideas
+        - videos
+        - opinions
+        - analytics
+        - softwares
+        type: string
+      user_email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.PostCreateV2:
+    properties:
+      blocks:
+        items:
+          $ref: '#/definitions/types.BlockCreate'
+        type: array
+      content:
+        type: string
+      created:
+        type: string
+      first_block_id:
+        type: string
+      id:
+        type: string
+      media_url:
+        type: string
+      payment:
+        type: number
+      tags:
+        items:
+          $ref: '#/definitions/types.Tag'
+        type: array
+      title:
+        type: string
+      type:
+        enum:
+        - ideas
+        - videos
+        - opinions
+        - analytics
+        - softwares
+        type: string
+      user_email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.PostResponse:
+    properties:
+      data:
+        $ref: '#/definitions/types.Post'
+      status:
+        type: string
+    type: object
+  types.PostsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Post'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationResponse'
+      status:
+        type: string
+    type: object
+  types.SuccessResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.Tag:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  types.TagSearchResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Tag'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationResponse'
+      status:
+        type: string
+    type: object
+  types.UpdateBlockRequest:
+    properties:
+      content:
+        description: опционально
+        minLength: 5
+        type: string
+      media_url:
+        description: опционально, но должен быть валидным URL
+        type: string
+      next_block_id:
+        type: string
+    type: object
+  types.UpdatePostRequest:
+    properties:
+      content:
+        description: опционально
+        minLength: 5
+        type: string
+      media_url:
+        description: опционально, но должен быть валидным URL
+        type: string
+      tags:
+        items:
+          $ref: '#/definitions/types.Tag'
+        type: array
+      title:
+        description: опционально, кастомный forbidden_titles
+        maxLength: 100
+        minLength: 3
+        type: string
+      type:
+        description: опционально, допустимые значения
+        enum:
+        - ideas
+        - videos
+        - opinions
+        - analytics
+        - softwares
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an API of posts-service for Socialweb application
+  title: AXA-socialweb-service Swagger
+  version: "1.0"
+paths:
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: Returns all posts with pagination and sorting
+      parameters:
+      - description: ForYou, Popular, Following
+        in: query
+        name: filter
+        type: string
+      - description: 'Post type: ideas|videos|opinions|analytics|softwares (Popular
+          only)'
+        in: query
+        name: type
+        type: string
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 1000)'
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Sort type: latest or recommended (default: latest)'
+        in: query
+        name: sort_type
+        type: string
+      - description: 'Sort by tags: ex.: idea,video'
+        in: query
+        name: tags
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with pagination
+          schema:
+            $ref: '#/definitions/types.PostsResponse'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all posts
+      tags:
+      - posts
+  /posts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an existing post for the authenticated user
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an existing post
+      tags:
+      - posts
+    get:
+      consumes:
+      - application/json
+      description: Returns single post.
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User ID
+        in: query
+        name: user_email
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PostsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get post by ID
+      tags:
+      - posts
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing post for the authenticated user
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated post data
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update an existing post
+      tags:
+      - posts
+  /posts/{id}/files:
+    delete:
+      consumes:
+      - application/json
+      description: Delete files from Object Storage and DB
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: File IDs to delete
+        in: body
+        name: file_ids
+        required: true
+        schema:
+          $ref: '#/definitions/types.DeleteFilesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deleted file URLs
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    type: string
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete files from post
+      tags:
+      - posts
+  /posts/{postId}/subscribe:
+    post:
+      consumes:
+      - application/json
+      description: Subscribe the authenticated user to a post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Subscribe to a post
+      tags:
+      - posts
+  /posts/{postId}/unsubscribe:
+    delete:
+      consumes:
+      - application/json
+      description: Unsubscribe the authenticated user from a post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Unsubscribe from a post
+      tags:
+      - posts
+  /posts/block/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an existing post for the authenticated user
+      parameters:
+      - description: Block ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an existing post
+      tags:
+      - posts
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing post for the authenticated user
+      parameters:
+      - description: Block ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated block data and order
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateBlockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update an existing block of post
+      tags:
+      - posts
+  /posts/create:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 'Creates a new block for post for the authenticated user, type_example:
+        ideas videos opinions analytics softwares'
+      parameters:
+      - description: User plan
+        in: query
+        name: user_plan
+        type: string
+      - description: Post JSON data
+        in: formData
+        name: post
+        required: true
+        type: string
+      - description: Block JSON data {
+        in: formData
+        name: block
+        type: string
+      - description: 'JSON metadata: {\'
+        in: formData
+        name: files_metadata
+        type: string
+      - collectionFormat: csv
+        description: Files to upload
+        in: formData
+        items:
+          type: file
+        name: files
+        type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.PostCreateV2'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new block for post
+      tags:
+      - posts
+  /posts/search:
+    get:
+      consumes:
+      - application/json
+      description: Returns all posts with pagination and sorting
+      parameters:
+      - description: User email
+        in: query
+        name: user_email
+        type: string
+      - description: query for search
+        in: query
+        name: q
+        type: string
+      - description: 'field for search desc: title, content, type, created, popular,
+          popular-created, created-popular. default without q -> sort = created. default
+          with q -> sort = '
+        in: query
+        name: sort
+        type: string
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 1000)'
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Sort order: title,content,type'
+        in: query
+        name: sort_type
+        type: string
+      - description: 'Sort by tags: ex.: idea,video'
+        in: query
+        name: tags
+        type: string
+      - description: 'Filter by post type: ideas videos opinions analytics softwares'
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with pagination
+          schema:
+            $ref: '#/definitions/types.PostsResponse'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Get all posts and blocks with search
+      tags:
+      - posts
+  /posts/search/tags:
+    get:
+      consumes:
+      - application/json
+      description: Returns tags that match the query (prefix or substring match)
+      parameters:
+      - description: Search query
+        in: query
+        name: q
+        type: string
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 1000)'
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.TagSearchResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Search tags by name (autocomplete)
+      tags:
+      - posts
+  /posts/user/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Returns all posts with pagination and sorting
+      parameters:
+      - description: ForYou, Popular, Following
+        in: query
+        name: filter
+        type: string
+      - description: 'Post type: ideas|videos|opinions|analytics|softwares (Popular
+          only)'
+        in: query
+        name: type
+        type: string
+      - description: User Email
+        in: path
+        name: user_email
+        required: true
+        type: string
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 1000)'
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Sort type: latest or recommended (default: latest)'
+        in: query
+        name: sort_type
+        type: string
+      - description: 'Sort by tags: ex.: idea,video'
+        in: query
+        name: tags
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with pagination
+          schema:
+            $ref: '#/definitions/types.PostsResponse'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      summary: Get all posts by userEmail
+      tags:
+      - posts
+securityDefinitions:
+  CookieAuth:
+    description: Сессионная аутентификация через куку sessionid
+    in: cookie
+    name: sessionid
+    type: apiKey
+swagger: "2.0"

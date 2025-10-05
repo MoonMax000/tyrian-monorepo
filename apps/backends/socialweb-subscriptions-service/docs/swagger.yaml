@@ -1,0 +1,595 @@
+basePath: /api/v1
+definitions:
+  types.FailureErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FailureResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.FollowRequest:
+    properties:
+      user_id:
+        type: string
+    type: object
+  types.Followed:
+    properties:
+      avatar_url:
+        type: string
+      cover_url:
+        type: string
+      description:
+        type: string
+      donation_url:
+        type: string
+      follower_count:
+        type: integer
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  types.FollowedResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Followed'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationResponse'
+      status:
+        type: string
+    type: object
+  types.Follower:
+    properties:
+      avatar_url:
+        type: string
+      cover_url:
+        type: string
+      description:
+        type: string
+      donation_url:
+        type: string
+      follower_count:
+        type: integer
+      id:
+        type: string
+      is_subscribed:
+        type: boolean
+      username:
+        type: string
+    type: object
+  types.FollowerResponse:
+    properties:
+      data:
+        $ref: '#/definitions/types.Follower'
+      status:
+        type: string
+    type: object
+  types.Followers:
+    properties:
+      avatar_url:
+        type: string
+      follower_count:
+        type: integer
+      id:
+        type: string
+      is_subscribed:
+        type: boolean
+      username:
+        type: string
+    type: object
+  types.FollowersListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Followers'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationResponse'
+      status:
+        type: string
+    type: object
+  types.GetUserByIdData:
+    properties:
+      avatar_url:
+        type: string
+      cover_url:
+        type: string
+      created:
+        type: string
+      description:
+        type: string
+      donation_url:
+        type: string
+      followed_count:
+        type: integer
+      follower_count:
+        type: integer
+      id:
+        type: string
+      is_subscribed:
+        type: boolean
+      post_count:
+        type: integer
+      username:
+        type: string
+    type: object
+  types.GetUserByIdResponse:
+    properties:
+      data:
+        $ref: '#/definitions/types.GetUserByIdData'
+      status:
+        type: string
+    type: object
+  types.PaginationResponse:
+    properties:
+      current_page:
+        type: integer
+      page_size:
+        type: integer
+      total_pages:
+        type: integer
+      total_records:
+        type: integer
+    type: object
+  types.SuccessResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  types.UnfollowRequest:
+    properties:
+      user_id:
+        type: string
+    type: object
+  types.UserIdsRequest:
+    properties:
+      user_ids:
+        items:
+          type: string
+        type: array
+    type: object
+  types.UserResponse:
+    properties:
+      avatar_url:
+        type: string
+      cover_url:
+        type: string
+      donation_url:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  types.UsersResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.UserResponse'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationResponse'
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an API of subscriptions for Socialweb application
+  title: AXA-socialweb-service API
+  version: "1.0"
+paths:
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Returns paginated list of all social web users with subscriber
+        counts
+      parameters:
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 1000)'
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Sort type: normal or recommended (default: normal)'
+        in: query
+        name: sort_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with pagination
+          schema:
+            $ref: '#/definitions/types.FollowerResponse'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get all social web users
+      tags:
+      - users
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Returns single user information with followed count. User can be
+        looked up by either ID or username.
+      parameters:
+      - description: User ID or username
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetUserByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get user by ID or username
+      tags:
+      - users
+  /users/{id}/followed:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of users the user is followed to
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.FollowedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get user's followed
+      tags:
+      - users
+  /users/{id}/followers:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of users followers to the authenticated social web
+        user's
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
+      - description: Sort field (username or subscriber_count)
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction (asc or desc)
+        in: query
+        name: sort_dir
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.FollowersListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get social web user followers
+      tags:
+      - users
+  /users/batch:
+    post:
+      consumes:
+      - application/json
+      description: Returns user information for given user IDs
+      parameters:
+      - description: User IDs
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UserIdsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.FollowerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get multiple users
+      tags:
+      - users
+  /users/me/follow:
+    post:
+      consumes:
+      - application/json
+      description: Follow authenticated user to a user
+      parameters:
+      - description: Follow Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.FollowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Follow to user
+      tags:
+      - users
+  /users/me/followed:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of users the user is followed to
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.FollowedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get user's followed
+      tags:
+      - users
+  /users/me/followers:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of users followers to the authenticated social web
+        user's
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
+      - description: Sort field (username or subscriber_count)
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction (asc or desc)
+        in: query
+        name: sort_dir
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.FollowersListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get social web user followers
+      tags:
+      - users
+  /users/me/unfollow:
+    post:
+      consumes:
+      - application/json
+      description: Unfollow authenticated user from a user
+      parameters:
+      - description: Unfollow Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UnfollowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Unfollow from user
+      tags:
+      - users
+  /users/search:
+    get:
+      description: Get users by username
+      parameters:
+      - description: Substring
+        in: query
+        name: q
+        type: string
+      - description: 'Field for sort: username (default). Doesn''t use'
+        in: query
+        name: sort_by
+        type: string
+      - description: 'Page number (default: 1, min: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10, max: 1000)'
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Sort type: normal or recommended (default: normal)'
+        in: query
+        name: sort_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with pagination
+          schema:
+            $ref: '#/definitions/types.UsersResponse'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            $ref: '#/definitions/types.FailureResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/types.FailureErrorResponse'
+      security:
+      - CookieAuth: []
+      summary: Get users by username
+      tags:
+      - users
+securityDefinitions:
+  CookieAuth:
+    description: Сессионная аутентификация через куку sessionid
+    in: cookie
+    name: sessionid
+    type: apiKey
+swagger: "2.0"

@@ -1,0 +1,23 @@
+services:
+  socweb-subscriptions-service:
+    restart: always
+    mem_limit: 500M
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
+    env_file:
+      - .env
+    ports:
+      - "${HTTP_PORT:-8007}:${HTTP_PORT:-8007}"
+    labels:
+      - "a=axasocweb"
+      - "traefik.enable=true"
+      - "traefik.http.routers.subscriptions.rule=PathPrefix(`/api/v1/users`)"
+      - "traefik.http.routers.subscriptions.entrypoints=web"
+
+networks:
+  default:
+    name: axanetwork
+    external: true
