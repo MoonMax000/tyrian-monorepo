@@ -1,0 +1,538 @@
+version: '3.8'
+
+# Tyrian Trade Platform - Complete Docker Compose
+# This file orchestrates all services for local development
+
+networks:
+  tyrian-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
+  rabbitmq-data:
+  elasticsearch-data:
+  s3-data:
+
+services:
+  # ========================================
+  # INFRASTRUCTURE SERVICES
+  # ========================================
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: tyrian-postgres
+    environment:
+      POSTGRES_USER: tyrian
+      POSTGRES_PASSWORD: tyrian_password
+      POSTGRES_DB: tyrian_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tyrian"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: tyrian-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: tyrian-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: tyrian
+      RABBITMQ_DEFAULT_PASS: tyrian_password
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: tyrian-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: tyrian-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: tyrian
+      MINIO_ROOT_PASSWORD: tyrian_password
+    ports:
+      - "9000:9000"  # API
+      - "9001:9001"  # Console
+    volumes:
+      - s3-data:/data
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ========================================
+  # AUTH SERVICES
+  # ========================================
+
+  auth-service:
+    build:
+      context: ./apps/backends/auth-service
+      dockerfile: Dockerfile
+    container_name: tyrian-auth-service
+    environment:
+      DATABASE_URL: postgresql://tyrian:tyrian_password@postgres:5432/tyrian_auth
+      REDIS_URL: redis://redis:6379/0
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+      SECRET_KEY: your-secret-key-change-in-production
+      ALLOWED_HOSTS: localhost,127.0.0.1,auth-service
+    ports:
+      - "8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  auth-sync-service:
+    build:
+      context: ./apps/backends/auth-sync-service
+      dockerfile: ../../../infrastructure/docker/go.Dockerfile
+      args:
+        SERVICE_PATH: apps/backends/auth-sync-service
+    container_name: tyrian-auth-sync-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_auth_sync
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8002:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  # ========================================
+  # SOCIAL NETWORK SERVICES
+  # ========================================
+
+  socialweb-posts-service:
+    build:
+      context: ./apps/backends/socialweb-posts-service
+      dockerfile: Dockerfile
+    container_name: tyrian-posts
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_posts
+      REDIS_URL: redis://redis:6379/1
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY: tyrian
+      S3_SECRET_KEY: tyrian_password
+    ports:
+      - "8003:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  socialweb-profiles-service:
+    build:
+      context: ./apps/backends/socialweb-profiles-service
+      dockerfile: Dockerfile
+    container_name: tyrian-profiles
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_profiles
+      REDIS_URL: redis://redis:6379/2
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8004:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  socialweb-likes-service:
+    build:
+      context: ./apps/backends/socialweb-likes-service
+      dockerfile: Dockerfile
+    container_name: tyrian-likes
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_likes
+      REDIS_URL: redis://redis:6379/3
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8005:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  socialweb-subscriptions-service:
+    build:
+      context: ./apps/backends/socialweb-subscriptions-service
+      dockerfile: Dockerfile
+    container_name: tyrian-subscriptions
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_subscriptions
+      REDIS_URL: redis://redis:6379/4
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8006:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  socialweb-favorites-service:
+    build:
+      context: ./apps/backends/socialweb-favorites-service
+      dockerfile: Dockerfile
+    container_name: tyrian-favorites
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_favorites
+      REDIS_URL: redis://redis:6379/5
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8007:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  socialweb-notifications-service:
+    build:
+      context: ./apps/backends/socialweb-notifications-service
+      dockerfile: ../../../infrastructure/docker/python-fastapi.Dockerfile
+      args:
+        SERVICE_PATH: apps/backends/socialweb-notifications-service
+    container_name: tyrian-notifications
+    environment:
+      DATABASE_URL: postgresql://tyrian:tyrian_password@postgres:5432/tyrian_notifications
+      REDIS_URL: redis://redis:6379/6
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8010:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  # ========================================
+  # STREAMING SERVICES
+  # ========================================
+
+  stream-auth-service:
+    build:
+      context: ./apps/backends/stream-auth-service
+      dockerfile: Dockerfile
+    container_name: tyrian-stream-auth
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_stream_auth
+      REDIS_URL: redis://redis:6379/7
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8011:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  stream-chat-service:
+    build:
+      context: ./apps/backends/stream-chat-service
+      dockerfile: Dockerfile
+    container_name: tyrian-stream-chat
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_stream_chat
+      REDIS_URL: redis://redis:6379/8
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8012:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  stream-media-service:
+    build:
+      context: ./apps/backends/stream-media-service
+      dockerfile: Dockerfile
+    container_name: tyrian-stream-media
+    environment:
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+      REDIS_URL: redis://redis:6379/9
+    ports:
+      - "8013:8080"
+      - "8014:8081"  # WHIP/WHEP
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  stream-notify-service:
+    build:
+      context: ./apps/backends/stream-notify-service
+      dockerfile: Dockerfile
+    container_name: tyrian-stream-notify
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_stream_notify
+      REDIS_URL: redis://redis:6379/10
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8015:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  stream-recommend-service:
+    build:
+      context: ./apps/backends/stream-recommend-service
+      dockerfile: Dockerfile
+    container_name: tyrian-stream-recommend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_stream_recommend
+      REDIS_URL: redis://redis:6379/11
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8016:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  stream-streamer-service:
+    build:
+      context: ./apps/backends/stream-streamer-service
+      dockerfile: Dockerfile
+    container_name: tyrian-stream-streamer
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tyrian
+      DB_PASSWORD: tyrian_password
+      DB_NAME: tyrian_stream_streamer
+      REDIS_URL: redis://redis:6379/12
+      RABBITMQ_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8017:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+
+  # ========================================
+  # STOCKS SERVICE
+  # ========================================
+
+  stocks-backend:
+    build:
+      context: ./apps/backends/stocks-backend/core
+      dockerfile: Dockerfile
+    container_name: tyrian-stocks-backend
+    environment:
+      DATABASE_URL: postgresql://tyrian:tyrian_password@postgres:5432/tyrian_stocks
+      REDIS_URL: redis://redis:6379/13
+      CELERY_BROKER_URL: amqp://tyrian:tyrian_password@rabbitmq:5672/
+    ports:
+      - "8020:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+    volumes:
+      - ./apps/backends/stocks-backend/core/media:/app/media
+
+  # ========================================
+  # NGINX REVERSE PROXY (Optional)
+  # ========================================
+
+  nginx:
+    image: nginx:alpine
+    container_name: tyrian-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infrastructure/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - auth-service
+      - socialweb-posts-service
+      - stream-auth-service
+      - stocks-backend
+    networks:
+      - tyrian-network
+    restart: unless-stopped
+

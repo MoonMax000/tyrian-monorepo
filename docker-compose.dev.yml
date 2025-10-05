@@ -1,0 +1,142 @@
+version: '3.8'
+
+# Development Docker Compose - Infrastructure Only
+# Run this for local development of frontend/backend services
+
+networks:
+  tyrian-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
+  rabbitmq-data:
+  elasticsearch-data:
+  s3-data:
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: tyrian-postgres-dev
+    environment:
+      POSTGRES_USER: tyrian
+      POSTGRES_PASSWORD: tyrian_dev
+      POSTGRES_MULTIPLE_DATABASES: >-
+        tyrian_auth,tyrian_auth_sync,tyrian_posts,tyrian_profiles,
+        tyrian_likes,tyrian_subscriptions,tyrian_favorites,tyrian_notifications,
+        tyrian_stream_auth,tyrian_stream_chat,tyrian_stream_notify,
+        tyrian_stream_recommend,tyrian_stream_streamer,tyrian_stocks
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/create-multiple-databases.sh:/docker-entrypoint-initdb.d/create-multiple-databases.sh
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tyrian"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: tyrian-redis-dev
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: tyrian-rabbitmq-dev
+    environment:
+      RABBITMQ_DEFAULT_USER: tyrian
+      RABBITMQ_DEFAULT_PASS: tyrian_dev
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI (http://localhost:15672)
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: tyrian-elasticsearch-dev
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: tyrian-minio-dev
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: tyrian
+      MINIO_ROOT_PASSWORD: tyrian_dev_password
+    ports:
+      - "9000:9000"  # API
+      - "9001:9001"  # Console (http://localhost:9001)
+    volumes:
+      - s3-data:/data
+    networks:
+      - tyrian-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Optional: Database admin UI
+  adminer:
+    image: adminer:latest
+    container_name: tyrian-adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - tyrian-network
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  # Optional: Redis Commander
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: tyrian-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - tyrian-network
+    depends_on:
+      - redis
+    restart: unless-stopped
+
